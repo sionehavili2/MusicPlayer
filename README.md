@@ -1,5 +1,5 @@
 # MusicPlayer
-This is the final project for CS4760 for the group At Least 4. The goal of this project is to create a social media and room app based around music. Users will be able to create an account and create/join music rooms.
+This is the final project for CS4760 for the group At Least 4. The goal of this project is to create a social media and room app based around music. Users will be able to join music rooms with others where they will be able to add songs to the queue, vote on songs, and ultimately connect with one another over music. 
 
 ## Features
 ### Highest Priority (1)
