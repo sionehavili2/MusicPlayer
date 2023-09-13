@@ -1,13 +1,32 @@
 # MusicPlayer
-This is the final project for CS4760 for the group Almost 4. The goal of this project is to create a social media and room app based around music. Users will be able to create an account and create/join music rooms.
+This is the final project for CS4760 for the group At Least 4. The goal of this project is to create a social media and room app based around music. Users will be able to create an account and create/join music rooms.
 
 ## Features
 ### Highest Priority (1)
-* test
-  * Another test
- * Another
+* Music Feed
+  * The app will feature a social media feed that will feature things such as rooms created, songs currently playing, and most liked songs. 
+* API Calls for Music
+  * Rather than storing audio files in the backend, the app will make API calls to Spotify to stream music.
+* Music Rooms
+  * Users will be able to create rooms where music will be playing so that all users can listen to the same song. Users can add songs to the queue, which will be then be randomly selected to play next (i.e. shuffled).
+* User Accounts
+  * Users will be able to create accounts, whose information will be stored in MongoDB after being salted and hashed.
 ### Moderate Priority (2)
+* Chat
+  * While in the room, users will be able to chat with one another.
+* Voting System
+  * The rooms will feature a voting system for the songs, and songs that have a low score will not be played in that room as often.
 ### Lowest Priority (3)
+* Friends List / Online Status
+  * Users will be able to see which other users are online without needing to join a room. This will extend to a friends list where users will be able to view their friends and quickly join rooms together.
+
+## Technologies Used
+* MERN Stack
+* Visual Studio Code
+* Trello
+* Spotify API
+* GitHub
+* Atlas
 
 ## Sprints
 ### Week 2 (Sept 7 - Sept 19)
