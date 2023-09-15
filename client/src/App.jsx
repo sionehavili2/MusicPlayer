@@ -1,12 +1,18 @@
 import "./App.css";
-import Hello from "./components/HelloWorld";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./Pages/Home";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
 
 function App() {
   return (
-    <>
-      <h1>At least 4</h1>
-      <Hello />
-    </>
+    <div>
+      <Routes>
+        <Route path="" element={<HomePage />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+      </Routes>
+    </div>
   );
 }
 
