@@ -39,6 +39,7 @@ const server = http.createServer(app);
 const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", credentials: true },});
 const rooms = [{roomID: 0, roomName: "firstRoom", Roomdescription: "hello this is a description for a room"}];
 console.log(rooms);
+let RandomTestMessageForClient = "Message1 here:";
 
 //Socket connections
 io.on('connection', (socket) => 
@@ -59,7 +60,7 @@ io.on('connection', (socket) =>
 
 
   //1 .Pass Data to room
-  let RandomTestMessageForClient = "Message1 here:";
+
   //socket.emit("dataFromServer", rooms, RandomTestMessageForClient);
   
   // socket.on("dataFromClient", (roomsFromClient) => {
@@ -78,9 +79,7 @@ io.on('connection', (socket) =>
 
   socket.on("add-Message", (message) => 
   {
-    let updatedMessage = RandomTestMessageForClient + "\n\n" + message;
-    RandomTestMessageForClient = updatedMessage;
-
+    RandomTestMessageForClient = RandomTestMessageForClient + "\n\n" + message;
     io.emit("setMessage",RandomTestMessageForClient);
   });
 
