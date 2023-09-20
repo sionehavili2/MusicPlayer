@@ -4,6 +4,8 @@ import "./loadEnvironment.mjs";
 import db from "./db/conn.mjs";
 import { Server as socketIOServer } from "socket.io";
 import http from "http";
+import { rmSync } from "fs";
+import { callbackify } from "util";
 
 const app = express();
 app.use(express.json());
@@ -30,26 +32,61 @@ app.listen(SERVER_PORT, () => {
 });
 
 
-//       Sione Havili
-//Sockets
+// Developer : Sione Havili
+
+//Sockets VARIABLES
 const server = http.createServer(app);
 const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", credentials: true },});
+const rooms = [{roomID: 0, roomName: "firstRoom", Roomdescription: "hello this is a description for a room"}];
+console.log(rooms);
 
+//Socket connections
 io.on('connection', (socket) => 
 {
+  /////////// Debugging Functions ////////////////////\
+
   /*  Log the connection */
   //console.log("User Connected -- SocketID: " + socket.id);
-  
-  /*  Test Passing a parameter */  //Pass a string value to socket that just connected
+
+  /*  Test Passing a parameter * //Pass a string value to socket that just connected
   socket.emit("welcome", "you have received the message from the backend");
-
-
+  
   /* Test Ping  */
-  socket.on("ping", (count) => { console.log(count);});
+  //socket.on("ping", (count) => { console.log(count);});
+  
+  /////////// End of Debugging Functions /////////////
+
+
+
+  //1 .Pass Data to room
+  let RandomTestMessageForClient = "Message1 here:";
+  //socket.emit("dataFromServer", rooms, RandomTestMessageForClient);
+  
+  // socket.on("dataFromClient", (roomsFromClient) => {
+
+  //   // const roomPassed = [...roomsFromClient,];
+  //   // console.log("recieved something from client")
+  //   // console.log(roomsFromClient);
+  // });
+
+  socket.on("getDataFromServer", (callBackFunction) => 
+  {
+    //Send Current String
+    callBackFunction(RandomTestMessageForClient);
+    
+  });
+
+  socket.on("add-Message", (message) => 
+  {
+    let updatedMessage = RandomTestMessageForClient + "\n\n" + message;
+    RandomTestMessageForClient = updatedMessage;
+
+    io.emit("setMessage",RandomTestMessageForClient);
+  });
+
 });
 
+//Socket Listener
 server.listen(SOCKET_PORT, () => {
   console.log(`Socket server is running on port ${SOCKET_PORT}\n`);
 });
-
-

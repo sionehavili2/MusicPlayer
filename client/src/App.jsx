@@ -1,6 +1,6 @@
 import "./App.css";
 import Hello from "./components/HelloWorld";
-import Room from "./components/Rooms";
+import Room from "./components/Rooms/Rooms.jsx";
 
 function App() {
   return (
