@@ -20,6 +20,7 @@ const Login = () => {
   }
 
   function handlePasswordChange(e) {
+    console.log(e.target.value)
     setPasswordKeyVal(e.target.value);
   }
   function hasher(word) {
@@ -29,20 +30,23 @@ const Login = () => {
   // code
   const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
+    await axios
       .post("http://localhost:4000/loginWithSalt", {
         username: username,
       })
       .then((response) => {
         // Handle the response data
-        console.log(response.data);
+        console.log(response.data)
+        console.log("above here is response")
         setSaltResponse(response.data);
+        console.log(saltResponse)
+        console.log("above here is the state")
       })
       .catch((error) => {
         // Handle any errors
         console.error(error);
       });
-    console.log(saltResponse);
+      
     const hashed = hasher(passwordKeyVal);
 
     const user = {
@@ -51,7 +55,7 @@ const Login = () => {
       salt: saltResponse,
       type: type,
     };
-    axios
+    await axios
       .post("http://localhost:4000/login", user)
       .then((res) => {
         console.log(
