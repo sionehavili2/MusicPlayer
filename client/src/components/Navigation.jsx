@@ -7,7 +7,7 @@ const NavigationBar = () => {
   return (
     <Navbar bg="dark" data-bs-theme="dark">
       <Container>
-        <Navbar.Brand href="/">Earbook</Navbar.Brand>
+        <Navbar.Brand href="/">Ear book</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link href="/">Home</Nav.Link>
           <Nav.Link href="Login">Login</Nav.Link>
