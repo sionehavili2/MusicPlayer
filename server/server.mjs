@@ -8,7 +8,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:3000", //telling our server which url/server is gonna be makiing calls to our socket.io server
+    origin: "http://localhost:3000", //telling our server which url/server is gonna be making calls to our socket.io server
     credentials: true,
   })
 );
