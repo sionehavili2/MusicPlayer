@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import sha256 from "js-sha256";
@@ -20,6 +20,7 @@ const Login = () => {
   }
 
   function handlePasswordChange(e) {
+    console.log(e.target.value)
     setPasswordKeyVal(e.target.value);
   }
   function hasher(word) {
@@ -27,22 +28,23 @@ const Login = () => {
     return hashed;
   }
   // code
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
     axios
       .post("http://localhost:4000/loginWithSalt", {
         username: username,
       })
       .then((response) => {
         // Handle the response data
-        console.log(response.data);
         setSaltResponse(response.data);
       })
       .catch((error) => {
         // Handle any errors
         console.error(error);
       });
-    console.log(saltResponse);
+  })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const hashed = hasher(passwordKeyVal);
 
     const user = {
@@ -51,7 +53,7 @@ const Login = () => {
       salt: saltResponse,
       type: type,
     };
-    axios
+    await axios
       .post("http://localhost:4000/login", user)
       .then((res) => {
         console.log(

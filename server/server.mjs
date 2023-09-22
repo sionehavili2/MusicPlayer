@@ -68,7 +68,9 @@ app.post("/loginWithSalt", async (req, res) => {
 app.post("/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-
+  console.log(password);
+  console.log("Here");
+  console.log(password);
   let collection = await db.collection("users");
   let results = await collection.find({ username: username }).toArray();
 
