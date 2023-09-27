@@ -22,7 +22,7 @@ const SOCKET_PORT = process.env.PORT || 5000;
 
 //GET Requests
 app.get("/", (req, res) => res.send("Hello, World!"));
-app.get("/helloworld", (req,res) => {
+app.get("/helloworld", (req, res) => {
   console.log("Hello World!");
   res.send("Hello World!");
 });
@@ -31,19 +31,26 @@ app.listen(SERVER_PORT, () => {
   console.log(`Server is running on port: ${SERVER_PORT}`);
 });
 
-
 // Developer : Sione Havili
 
 //Sockets VARIABLES
 const server = http.createServer(app);
-const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", credentials: true },});
-let allRooms = [{roomID: 0, roomName: "firstRoom", Roomdescription: "hello this is a description for a room"}];
+const io = new socketIOServer(server, {
+  cors: { origin: "http://localhost:3000", credentials: true },
+});
+let allRooms = [
+  {
+    roomID: 0,
+    roomName: "firstRoom",
+    Roomdescription: "hello this is a description for a room",
+  },
+];
 let messageBoxString = "Message1 here:";
-let allData = [allRooms,messageBoxString];
+let randomNum = 3;
+let allData = [messageBoxString, 3];
 
 //Socket connections
-io.on('connection', (socket) => 
-{
+io.on("connection", (socket) => {
   /////////// Debugging Functions ////////////////////\
 
   /*  Log the connection */
@@ -54,40 +61,16 @@ io.on('connection', (socket) =>
   
   /* Test Ping  */
   //socket.on("ping", (count) => { console.log(count);});
-  
+
   /////////// End of Debugging Functions /////////////
 
+  // 1. As soon as user connects pass them the data
+  socket.emit("dataFromServer", allData);
 
-
-  //1 .Pass Data to room
-
-  //socket.emit("dataFromServer", rooms, RandomTestMessageForClient);
-  
-  // socket.on("dataFromClient", (roomsFromClient) => {
-
-  //   // const roomPassed = [...roomsFromClient,];
-  //   // console.log("recieved something from client")
-  //   // console.log(roomsFromClient);
-  // });
-
-  socket.on("getInitialDataFromServer", (callBackFunction) =>{
-    callBackFunction(allData);
+  socket.on("dataToServer", (dataFromClient) => {
+    allData.push(dataFromClient);
+    io.emit("dataFromServer", allData);
   });
-
-  socket.on("getDataFromServer", (callBackFunction) => 
-  {
-    //Send Current MessageBox String to Client
-    callBackFunction(messageBoxString);
-    socket.emit("getRooms");
-  });
-
-  socket.on("add-Message", (message) => 
-  {
-    messageBoxString = messageBoxString + "\n\n" + message;
-    //Emit to all to send message
-    io.emit("sendMessage",messageBoxString);
-  });
-
 });
 
 //Socket Listener

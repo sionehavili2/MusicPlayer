@@ -27,6 +27,7 @@ function Rooms() {
       setAllData([...receivedInitialDataFromServer]);
       console.log(...receivedInitialDataFromServer);
     });
+    
   });
 
   //Updates message
