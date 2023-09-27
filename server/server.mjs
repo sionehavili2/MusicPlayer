@@ -4,7 +4,9 @@ import "./loadEnvironment.mjs";
 import db from "./db/conn.mjs";
 import spotifyWebApi from "spotify-web-api-node";
 import bodyParser from 'body-parser';
-//const spotifyWebApi = import('spotify-web-api-node');
+
+//const SpotifyWebApi = require("spotify-web-api-node")
+// spotifyWebApi = import f('spotify-web-api-node');
 const app = express();
 app.use(express.json());
 
@@ -40,9 +42,9 @@ function saltShaker(length) {
 app.post("/spotifyLogin", (req, res) =>  {
     const code = req.body.code
     const spotifyApi = new spotifyWebApi({
-      redirectUri: 'http://localhost:3000',
-      clientId: '7307ec35fb414373b246109805e86181',
-      clientSecret: 'c77fd6253469467cbc345114f398341e',
+      redirectUri: "http://localhost:3000",
+      clientId: "7307ec35fb414373b246109805e86181",
+      clientSecret: "c77fd6253469467cbc345114f398341e",
     })
     spotifyApi.authorizationCodeGrant(code)
     .then(data => {
@@ -52,12 +54,38 @@ app.post("/spotifyLogin", (req, res) =>  {
         expiresIn: data.body.expires_in,
       })
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error("Error in /spotifyLogin or /refresh:", error);
       res.sendStatus(400)
     })
 })
+app.get("/lyrics", async (req, res) => {
+  const lyrics =
+    (await lyricsFinder(req.query.artist, req.query.track)) || "No Lyrics Found"
+  res.json({ lyrics })
+})
+app.post("/refresh", (req, res) => {
+  const refreshToken = req.body.refreshToken
+  const spotifyApi = new SpotifyWebApi({
+    redirectUri: process.env.REDIRECT_URI,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    refreshToken,
+  })
 
-
+  spotifyApi
+    .refreshAccessToken()
+    .then(data => {
+      res.json({
+        accessToken: data.body.accessToken,
+        expiresIn: data.body.expiresIn,
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      res.sendStatus(400)
+    })
+})
 
 
 
@@ -82,28 +110,7 @@ app.post("/account", async (req, res) => {
   res.send(result);
 });
 
-app.post("/refresh", (req, res) => {
-  const refreshToken = req.body.refreshToken
-  const spotifyApi = new SpotifyWebApi({
-    redirectUri: process.env.REDIRECT_URI,
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    refreshToken,
-  })
 
-  spotifyApi
-    .refreshAccessToken()
-    .then(data => {
-      res.json({
-        accessToken: data.body.accessToken,
-        expiresIn: data.body.expiresIn,
-      })
-    })
-    .catch(err => {
-      console.log(err)
-      res.sendStatus(400)
-    })
-})
 
 app.post("/loginWithSalt", async (req, res) => {
   const username = req.body.username;
