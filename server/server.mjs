@@ -8,13 +8,48 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:3000", //telling our server which url/server is gonna be makiing calls to our socket.io server
+    origin: "http://localhost:3000", //telling our server which url/server is gonna be making calls to our socket.io server
     credentials: true,
   })
 );
 
 const PORT = process.env.PORT || 4000;
 // DO NOT EDIT ABOVE THIS LINE
+
+// DATA STRUCTS
+const songTemplate = {
+  "song_id": 0,
+  "likes": 0,
+  "timesStreamed": 0
+}
+
+const postTemplate = {
+  "timestamp": 0,
+  "body": "",
+  "likes": 0
+}
+
+// TODO: Move these after they are written
+app.post("/newPost", async (req, res) => {
+  let collection = await db.collection("posts");
+  let results = await collection.find({});
+  const id = results.length + 1
+  const newPost = { ...postTemplate, "timestamp": new Date(), "body": req.body.body }
+  let result = await collection.insertOne(newPost)
+  res.send(result).status(204)
+});
+
+app.post("/newSongRecord", async (req, res) => {
+  const songID = req.body.song_id
+  let collection = await db.collection("songs")
+  let results = await collection.find({ songID: song_id })
+  if (results.length > 0) {
+    // ++ song values
+  } else {
+    const newSong = { ...songTemplate}
+  }
+});
+
 
 // HELPER FUNCTIONS
 function saltShaker(length) {
