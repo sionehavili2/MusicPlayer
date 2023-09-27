@@ -29,11 +29,15 @@ This is the final project for CS4760 for the group At Least 4. The goal of this 
 * Atlas
 
 ## Sprints
-### Week 2 (Sept 7 - Sept 19)
+### Sprint 1 (Sept 7 - Sept 19)
 <ul>
-  <li>Tyler C is going to start the repo readme/documentation. The readme will have this week’s goals in it to start, but will be updated each week to reflect features and future implementations. This will also serve as the bulleted list of features that we will show to the client.</li>
+  <li>Gregor.io is going to start the repo readme/documentation. The readme will have this week’s goals in it to start, but will be updated each week to reflect features and future implementations. This will also serve as the bulleted list of features that we will show to the client.</li>
   <li>Hayden is going to research APIs to see how we pull music from a source like SoundCloud. He is also going to compare it to just hosting the music files on the server and see which is better. This is budgeted to take 10 hours.</li>
   <li>Juan is going to set up the Authentication into a Mongo Database. This includes setting up secure data storage with encryption. He is also going to research News APIs. </li>
-  <li>Tyler J is going to research APIs and work on getting a functioning news feed to show up on the front page. This is budgeted to take 6 hours.</li>
+  <li>Tyler is going to research APIs and work on getting a functioning news feed to show up on the front page. This is budgeted to take 6 hours.</li>
   <li>Sione is going to research websocket communications and MERN interfaces to build a communication interface. He will also be looking into establishing room communication between users, and between the frontend and the backend.</li>
 </ul>
+### Sprint 2 (Sept 26 - ..)
+* Gregor.io is going to continue documentation while also working with Tyler to flesh out the news feed with useful information from the back-end as well as data structures to hold statstics such as post likes and song likes and plays.
+* Hayden and Juan are going to work on the Spotify API and getting that set up so that only one user needs to authenticate for a room to function. This will include passing information from the front-end to the back-end, which will then call the API and return that back to the front-end.
+* Sione is going to work on setting up an interface so that we can add plugins down the line for functionality of the app.
