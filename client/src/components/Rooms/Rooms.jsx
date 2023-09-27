@@ -6,6 +6,7 @@ const socket = io("http://localhost:5000");
 
 function Rooms() {
   //Variables
+  const [allData,setAllData] = useState([]);
   const [rooms, setRooms] = useState([]);
 
   // !! TEST !! Variables
@@ -17,17 +18,19 @@ function Rooms() {
   //When a user (webpage) connects to socket
   socket.on("connect", () => {
     //Log connection for web page
-    console.log(
-      "client socket has connected to server [socketID : " + socket.id + "]"
-    );
-
+    console.log("client socket has connected to server [socketID : " + socket.id + "]");
     //Request "getDataFromServer" Event, handle information when you get it back
-    socket.emit("getDataFromServer", (testString) => {
-      setTestString(testString);
+    //socket.emit("getDataFromServer", (testString) => {setTestString(testString)});
+    socket.emit("getInitialDataFromServer", (receivedInitialDataFromServer) => 
+    {
+      console.log("received: getInitialDataFromServer");
+      setAllData([...receivedInitialDataFromServer]);
+      console.log(...receivedInitialDataFromServer);
     });
   });
 
-  socket.on("setMessage", (message) => setTestString(message));
+  //Updates message
+  socket.on("sendMessage", (message) => setTestString(message));
 
   // //Grab Initial Data from server
   // socket.on("dataFromServer", (roomsFromServer, testStringFromServer) => {
@@ -44,8 +47,6 @@ function Rooms() {
 
   //Handles when Join Room button is pressed
   function handleJoinRoomClick() {
-    console.log("Join room has been clicked");
-    console.log("input value" + inputValue);
     //Pass users the new string
     socket.emit("add-Message", inputValue);
   }

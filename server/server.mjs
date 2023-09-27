@@ -37,9 +37,9 @@ app.listen(SERVER_PORT, () => {
 //Sockets VARIABLES
 const server = http.createServer(app);
 const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", credentials: true },});
-const rooms = [{roomID: 0, roomName: "firstRoom", Roomdescription: "hello this is a description for a room"}];
-console.log(rooms);
-let RandomTestMessageForClient = "Message1 here:";
+let allRooms = [{roomID: 0, roomName: "firstRoom", Roomdescription: "hello this is a description for a room"}];
+let messageBoxString = "Message1 here:";
+let allData = [allRooms,messageBoxString];
 
 //Socket connections
 io.on('connection', (socket) => 
@@ -70,17 +70,22 @@ io.on('connection', (socket) =>
   //   // console.log(roomsFromClient);
   // });
 
+  socket.on("getInitialDataFromServer", (callBackFunction) =>{
+    callBackFunction(allData);
+  });
+
   socket.on("getDataFromServer", (callBackFunction) => 
   {
-    //Send Current String
-    callBackFunction(RandomTestMessageForClient);
-    
+    //Send Current MessageBox String to Client
+    callBackFunction(messageBoxString);
+    socket.emit("getRooms");
   });
 
   socket.on("add-Message", (message) => 
   {
-    RandomTestMessageForClient = RandomTestMessageForClient + "\n\n" + message;
-    io.emit("setMessage",RandomTestMessageForClient);
+    messageBoxString = messageBoxString + "\n\n" + message;
+    //Emit to all to send message
+    io.emit("sendMessage",messageBoxString);
   });
 
 });
