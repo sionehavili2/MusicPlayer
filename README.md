@@ -36,6 +36,6 @@ This is the final project for CS4760 for the group At Least 4. The goal of this 
 * Tyler is going to research APIs and work on getting a functioning news feed to show up on the front page. This is budgeted to take 6 hours.
 * Sione is going to research websocket communications and MERN interfaces to build a communication interface. He will also be looking into establishing room communication between users, and between the frontend and the backend.
 ### Sprint 2 (Sept 26 - ..)
-* Gregor.io is going to continue documentation while also working with Tyler to flesh out the news feed with useful information from the back-end as well as data structures to hold statstics such as post likes and song likes and plays.
+* Gregor.io is going to continue documentation while also working with Tyler to flesh out the news feed with useful information from the back-end as well as data structures to hold statstics such as post likes and song likes and plays. This will then be stored in Mongo and pulled for each user.
 * Hayden and Juan are going to work on the Spotify API and getting that set up so that only one user needs to authenticate for a room to function. This will include passing information from the front-end to the back-end, which will then call the API and return that back to the front-end.
 * Sione is going to work on setting up an interface so that we can add plugins down the line for functionality of the app.
