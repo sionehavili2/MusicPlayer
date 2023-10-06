@@ -1,4 +1,5 @@
 import React from "react"
+import {Button} from "react-bootstrap"
 
 export default function TrackSearchResult({ track, chooseTrack }) {
   function handlePlay() {
@@ -16,6 +17,9 @@ export default function TrackSearchResult({ track, chooseTrack }) {
         <div>{track.title}</div>
         <div className="text-muted">{track.artist}</div>
       </div>
+      <Button className="ml-auto" onClick={handleAddToQueue}>
+        Add to Queue
+      </Button>
     </div>
   )
 }
