@@ -2,9 +2,15 @@ import express, { response } from "express";
 import cors from "cors";
 import "./loadEnvironment.mjs";
 import db from "./db/conn.mjs";
+import spotifyWebApi from "spotify-web-api-node";
+import bodyParser from 'body-parser';
 
+//const SpotifyWebApi = require("spotify-web-api-node")
+// spotifyWebApi = import f('spotify-web-api-node');
 const app = express();
 app.use(express.json());
+
+
 
 app.use(
   cors({
@@ -12,6 +18,13 @@ app.use(
     credentials: true,
   })
 );
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
 
 const PORT = process.env.PORT || 4000;
 // DO NOT EDIT ABOVE THIS LINE
@@ -31,6 +44,57 @@ function saltShaker(length) {
 }
 
 //API SECTION BELOW
+
+//spotify login
+app.post("/spotifyLogin", (req, res) =>  {
+    const code = req.body.code
+    const spotifyApi = new spotifyWebApi({
+      redirectUri: "http://localhost:3000",
+      clientId: "7307ec35fb414373b246109805e86181",
+      clientSecret: "c77fd6253469467cbc345114f398341e",
+    })
+    spotifyApi.authorizationCodeGrant(code)
+    .then(data => {
+      res.json({
+        accessToken: data.body.access_token,
+        refreshToken: data.body.refresh_token,
+        expiresIn: data.body.expires_in,
+      })
+    })
+    .catch((error) => {
+      console.error("Error in /spotifyLogin or /refresh:", error);
+      res.sendStatus(400)
+    })
+})
+app.get("/lyrics", async (req, res) => {
+  const lyrics =
+    (await lyricsFinder(req.query.artist, req.query.track)) || "No Lyrics Found"
+  res.json({ lyrics })
+})
+app.post("/refresh", (req, res) => {
+  const refreshToken = req.body.refreshToken
+  const spotifyApi = new SpotifyWebApi({
+    redirectUri: process.env.REDIRECT_URI,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    refreshToken,
+  })
+
+  spotifyApi
+    .refreshAccessToken()
+    .then(data => {
+      res.json({
+        accessToken: data.body.accessToken,
+        expiresIn: data.body.expiresIn,
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      res.sendStatus(400)
+    })
+})
+
+
 
 // GET REQUESTS
 app.get("/", (req, res) => res.send("Hello, World!"));
@@ -52,6 +116,8 @@ app.post("/account", async (req, res) => {
   let result = await collection.insertOne(newUser);
   res.send(result);
 });
+
+
 
 app.post("/loginWithSalt", async (req, res) => {
   const username = req.body.username;
