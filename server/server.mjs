@@ -80,6 +80,25 @@ app.post("/refresh", (req, res) => {
     refreshToken,
   })
 
+app.post("/addToQueue", (req, res) => {
+  let base_url = "https://api.spotify.com/v1/me/player/queue?uri=spotify";
+  const uri = req.body.track_uri;
+  let api_url = base_url + uri;
+  axios
+    .post(api_url, {
+      username: username,
+    })
+    .then((response) => {
+      // Handle the response data
+      console.log(response)
+    })
+    .catch((error) => {
+      // Handle any errors
+      console.error(error);
+    });
+    res.send(response)
+})
+
   spotifyApi
     .refreshAccessToken()
     .then(data => {
