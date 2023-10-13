@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 4000;
 // DATA STRUCTS
 const songTemplate = {
   "song_id": 0,
+  // in the future, likes will be an array [] of usernames
   "likes": 0,
   "timesStreamed": 0
 }
@@ -26,18 +27,24 @@ const songTemplate = {
 const postTemplate = {
   "timestamp": 0,
   "body": "",
-  "likes": 0
+  "likes": 0,
+  "author": "",
 }
 
 // TODO: Move these after they are written
 app.post("/newPost", async (req, res) => {
   let collection = await db.collection("posts");
-  let results = await collection.find({});
-  const id = results.length + 1;
   const newPost = { ...postTemplate, "timestamp": new Date(), "body": req.body.body };
   let result = await collection.insertOne(newPost);
   res.send(result).status(204);
 });
+
+app.get("/posts", async (req, res) => {
+  let collection = await db.collection("posts");
+  let results = await collection.find({}).toArray();
+  // let results = await collection.find({}).sort({ timestamp: 1 }).toArray();
+  res.send(results).status(200);
+})
 
 app.post("/newSongRecord", async (req, res) => {
   const songID = req.body.song_id;

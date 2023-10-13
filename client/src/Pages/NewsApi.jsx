@@ -11,19 +11,32 @@ import NavigationBar from "../components/Navigation";
 const {Meta} = Card;
 
 function NewsApi() {
-  const [news, setNews] = useState([]);
+  // const [news, setNews] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-  useEffect(()=> {
-    const loadNews = async () => {
-      const response = await axios.get(
-        "http://newsapi.org/v2/top-headlines?country=us&category=entertainment&apiKey=77d4ca45dba14d37807355344addcfc5"
-      );
-      setNews(response.data.articles);
+  // useEffect(()=> {
+  //   const loadNews = async () => {
+  //     const response = await axios.get(
+  //       "http://newsapi.org/v2/top-headlines?country=us&category=entertainment&apiKey=77d4ca45dba14d37807355344addcfc5"
+  //     );
+  //     setNews(response.data.articles);
+  //   };
+  //   loadNews();
+  // },[]);
+
+  useEffect(() => {
+    async function getPosts() {
+      const response = await axios.get("http://localhost:4000/posts");
+      setPosts(response.data.posts);
     };
-    loadNews();
-  },[]);
+    getPosts();
+  }, []);
 
-  console.log("news",news);
+  const sendLikeToServer = () => {
+
+  }
+
+  console.log("posts:\n",posts);
 
   return (
     <div className='App'>
@@ -45,6 +58,7 @@ function NewsApi() {
                   Read More
                 </Button>
               </a>
+              <button onClick={()=>{sendLikeToServer()}}>Like</button>
             </Card>
           );
         })}
