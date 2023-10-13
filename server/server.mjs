@@ -6,6 +6,9 @@ import { Server as socketIOServer } from "socket.io";
 import http from "http";
 import { rmSync } from "fs";
 import { callbackify } from "util";
+import { createBrotliCompress } from "zlib";
+import { Timestamp } from "mongodb";
+import { time, timeStamp } from "console";
 
 const app = express();
 app.use(express.json());
@@ -35,22 +38,21 @@ app.listen(SERVER_PORT, () => {
 
 //Sockets VARIABLES
 const server = http.createServer(app);
-const io = new socketIOServer(server, {
-  cors: { origin: "http://localhost:3000", credentials: true },
-});
-let allRooms = [
-  {
-    roomID: 0,
-    roomName: "firstRoom",
-    Roomdescription: "hello this is a description for a room",
-  },
-];
-let messageBoxString = "Message1 here:";
-let randomNum = 3;
-let allData = [messageBoxString, 3];
+const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", credentials: true },});
 
+let messageBoxString = "Message1 here. ";
+let randomNum = 3;
+let roomCount = 2;
+let allData = [{roomHost: "Tim", members:["Tim","Mat","Car"]}, {roomHost: "Teddy ",members:["Teddy","Timothy","Car"]}];
+//Audio Variable
+let absoluteTrackPosition = 0;
+let absoluteTrackTimeStamp = 0;
+let isTrackPlaying = false;
 //Socket connections
 io.on("connection", (socket) => {
+
+  // socket.on("connect", () => { console.log("client socket connected [" + socket.id + "]")});
+
   /////////// Debugging Functions ////////////////////\
 
   /*  Log the connection */
@@ -64,16 +66,80 @@ io.on("connection", (socket) => {
 
   /////////// End of Debugging Functions /////////////
 
-  // 1. As soon as user connects pass them the data
-  socket.emit("dataFromServer", allData);
 
-  socket.on("dataToServer", (dataFromClient) => {
-    allData.push(dataFromClient);
-    io.emit("dataFromServer", allData);
+  // 1. Send to ALL CLIENTS
+  socket.on("sendDataToAll",(listenName, dataFromClient)=> 
+  {
+    io.emit("sendDataToAllClients",listenName,dataFromClient);
   });
+
+  // 2. When a user creates a room
+  socket.on("createRoom", (callBackFunction)=>
+  {
+    console.log("server: createRoom");
+    roomCount++;
+    let newRoomIndex = roomCount - 1; 
+    socket.join(newRoomIndex);
+    callBackFunction(newRoomIndex);
+  });
+
+  // 3. When a user joins a room
+  socket.on("joinRoom", (roomIndex, callBackFunction)=>
+  {
+    console.log("server: joinRoom[" + roomIndex + "]");
+    console.log("absolute track position:" + absoluteTrackPosition);
+    console.log("isTrackPlaying: " + isTrackPlaying);
+    socket.join(roomIndex);
+    callBackFunction(roomIndex, absoluteTrackPosition, isTrackPlaying, absoluteTrackTimeStamp);
+  });
+
+  // 4. When a user sends data to room
+  socket.on("sendToRoom",(roomIndex, dataSendToAll, callBackFunction) => 
+  {
+    io.to(roomIndex).emit("sendToRoom",dataSendToAll);
+    callBackFunction(dataSendToAll);
+  })
+
+  //5. When a user plays a song to room
+  socket.on("play", (roomIndex, incomingTrackPosition)=> 
+  {
+    console.log("server recieved play command");
+    absoluteTrackPosition = incomingTrackPosition;
+    isTrackPlaying = true;
+    io.to(roomIndex).emit("audioCommand",absoluteTrackPosition, isTrackPlaying);
+  });
+
+  //6. When a user pauses a song to room
+  socket.on("pause", (roomIndex, incomingTrackPosition)=> 
+  {
+    console.log("server received PAUSE command");
+    absoluteTrackPosition = incomingTrackPosition;
+    isTrackPlaying = false;
+    io.to(roomIndex).emit("audioCommand", absoluteTrackPosition, isTrackPlaying);
+  });
+
+  //7. Get current track position in song
+  socket.on("updateTrackPosition", (roomIndex, immediateTrackPosition, timeOfStamp)=> 
+  {
+    console.log("SERVER RECEIVED UPDATE");
+    console.log(roomIndex);
+    console.log(immediateTrackPosition);
+    console.log(timeOfStamp);
+
+    absoluteTrackPosition = immediateTrackPosition;
+    absoluteTrackTimeStamp = timeOfStamp;
+    
+    console.log("new absolute track position: " + absoluteTrackPosition);
+    
+    //io.to(roomIndex).emit("updatedTrackPosition",currentTrackPosition);
+  });
+
 });
+
+io.on("disconnect", (socket) => {socket.disconnect(); console.log("socket DISCONNECTED [" + socket.id + "]");});
 
 //Socket Listener
 server.listen(SOCKET_PORT, () => {
   console.log(`Socket server is running on port ${SOCKET_PORT}\n`);
 });
+
