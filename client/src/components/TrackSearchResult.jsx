@@ -1,5 +1,5 @@
 import React from "react"
-import axios from 'axios';
+import {Button} from "react-bootstrap"
 
 export default function TrackSearchResult({ track, chooseTrack, accessToken}) {
   
@@ -63,6 +63,9 @@ export default function TrackSearchResult({ track, chooseTrack, accessToken}) {
         <div className="text-muted">{track.artist}</div>
         <button onClick={addSongClient}>test button</button>
       </div>
+      <Button className="ml-auto" onClick={handleAddToQueue}>
+        Add to Queue
+      </Button>
     </div>
   )
 }
