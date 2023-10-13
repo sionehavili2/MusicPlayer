@@ -25,16 +25,17 @@ function NewsApi() {
   // },[]);
 
   useEffect(() => {
-    async function getPosts() {
-      const response = await axios.get("http://localhost:4000/posts");
-      setPosts(response.data.posts);
+    const getPosts = async () => {
+      console.log("Requesting posts");
+      const response = await axios.get("http://localhost:4000/posts").then((res) => {
+        console.log(response);
+        setPosts(response.data.posts);
+      });
+      
     };
     getPosts();
   }, []);
 
-  const sendLikeToServer = () => {
-
-  }
 
   console.log("posts:\n",posts);
 
@@ -46,20 +47,20 @@ function NewsApi() {
           return (
             
             
-            <Card 
-            key={index}
-            hoverable
-            style={{width: "70%"}}
-            conver={<img alt="" src={item.urlToImage}/>} 
-            >
-              <Meta title={item.title} description={item.content}/>
-              <a href={item.url} target="_blank" rel={"noopener noreferrer"}>
-                <Button type="primary" style={{marginTop: "10px"}}>
-                  Read More
-                </Button>
-              </a>
+            // <Card 
+            // key={index}
+            // hoverable
+            // style={{width: "70%"}}
+            // conver={<img alt="" src={item.urlToImage}/>} 
+            // >
+            //   <Meta title={item.title} description={item.content}/>
+            //   <a href={item.url} target="_blank" rel={"noopener noreferrer"}>
+            //     <Button type="primary" style={{marginTop: "10px"}}>
+            //       Read More
+            //     </Button>
+            //   </a>
               <button onClick={()=>{sendLikeToServer()}}>Like</button>
-            </Card>
+            /* </Card> */
           );
         })}
 

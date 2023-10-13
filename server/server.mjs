@@ -42,6 +42,8 @@ app.post("/newPost", async (req, res) => {
 app.get("/posts", async (req, res) => {
   let collection = await db.collection("posts");
   let results = await collection.find({}).toArray();
+
+  console.log("results" + results);
   // let results = await collection.find({}).sort({ timestamp: 1 }).toArray();
   res.send(results).status(200);
 })
