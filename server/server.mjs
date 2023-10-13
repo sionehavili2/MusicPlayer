@@ -33,20 +33,23 @@ const postTemplate = {
 app.post("/newPost", async (req, res) => {
   let collection = await db.collection("posts");
   let results = await collection.find({});
-  const id = results.length + 1
-  const newPost = { ...postTemplate, "timestamp": new Date(), "body": req.body.body }
-  let result = await collection.insertOne(newPost)
-  res.send(result).status(204)
+  const id = results.length + 1;
+  const newPost = { ...postTemplate, "timestamp": new Date(), "body": req.body.body };
+  let result = await collection.insertOne(newPost);
+  res.send(result).status(204);
 });
 
 app.post("/newSongRecord", async (req, res) => {
-  const songID = req.body.song_id
-  let collection = await db.collection("songs")
-  let results = await collection.find({ songID: song_id })
-  if (results.length > 0) {
-    // ++ song values
+  const songID = req.body.song_id;
+  let collection = await db.collection("songs");
+  let results = await collection.find({ song_id: songID });
+  if (await results.count() > 0) {
+    await collection.updateOne({ song_id: songID }, { $inc: { timesStreamed: 1} });
+    res.send("Play counter incremented")
   } else {
-    const newSong = { ...songTemplate}
+    const newSong = { ...songTemplate, song_id: songID };
+    await collection.insertOne(newSong);
+    res.send(result).status(204);
   }
 });
 
