@@ -136,7 +136,20 @@ app.post("/account", async (req, res) => {
   res.send(result);
 });
 
+app.get("/posts", async (req, res) => {
+  let collection = await db.collection("posts");
+  let results = await collection.find({}).toArray();
+  // let results = await collection.find({}).sort({ timestamp: 1 }).toArray();
+  res.send(results).status(200);
+});
 
+useEffect(() => {
+  async function getPosts() {
+    const response = await axios.get("http://localhost:4000/posts");
+    setPosts(response.data.posts);
+  }
+  getPosts();
+}, []);
 
 app.post("/loginWithSalt", async (req, res) => {
   const username = req.body.username;
