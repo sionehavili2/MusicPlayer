@@ -5,6 +5,7 @@ import db from "./db/conn.mjs";
 import spotifyWebApi from "spotify-web-api-node";
 import bodyParser from 'body-parser';
 
+
 //const SpotifyWebApi = require("spotify-web-api-node")
 // spotifyWebApi = import f('spotify-web-api-node');
 const app = express();
@@ -66,11 +67,7 @@ app.post("/spotifyLogin", (req, res) =>  {
       res.sendStatus(400)
     })
 })
-app.get("/lyrics", async (req, res) => {
-  const lyrics =
-    (await lyricsFinder(req.query.artist, req.query.track)) || "No Lyrics Found"
-  res.json({ lyrics })
-})
+
 app.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken
   const spotifyApi = new SpotifyWebApi({
@@ -136,7 +133,26 @@ app.post("/account", async (req, res) => {
   res.send(result);
 });
 
+app.post("/addToQue", (req, res) => {
+  console.log("Made it here");
 
+  // Extract trackUri from the request body
+  const { trackUri } = req.body;
+
+  // Validate if trackUri is a string and has the correct format (e.g., 'spotify:track:2QTDuJIGKUjR7E2Q6KupIh')
+  if (typeof trackUri !== 'string' || !/^spotify:track:[A-Za-z0-9]+$/.test(trackUri)) {
+    return res.status(400).send('Invalid trackUri format');
+  }
+
+  // Construct the full API call
+  const fullAPICall = `https://api.spotify.com/v1/me/player/queue/${trackUri}`;
+
+  console.log("Track Uri:", trackUri);
+  console.log("Full API Call:", fullAPICall);
+
+axios.post
+
+});
 
 app.post("/loginWithSalt", async (req, res) => {
   const username = req.body.username;
