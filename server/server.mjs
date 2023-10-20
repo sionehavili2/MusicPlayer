@@ -2,6 +2,7 @@ import express, { response } from "express";
 import cors from "cors";
 import "./loadEnvironment.mjs";
 import db from "./db/conn.mjs";
+import { ObjectId } from "mongodb";
 
 const app = express();
 app.use(express.json());
@@ -38,6 +39,14 @@ app.post("/newPost", async (req, res) => {
   let result = await collection.insertOne(newPost);
   res.send(result).status(204);
 });
+
+app.post("/likePost", async (req, res) => {
+  let { id } = req.body
+  let collection = await db.collection("posts");
+  const objectID = new ObjectId(id)
+  let result = await collection.updateOne({ _id: objectID}, { $inc: { likes: 1} });
+  res.send(result).status(204);
+})
 
 app.get("/posts", async (req, res) => {
   let collection = await db.collection("posts");

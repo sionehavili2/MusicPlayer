@@ -11,7 +11,6 @@ import NavigationBar from "../components/Navigation";
 const {Meta} = Card;
 
 function NewsApi() {
-  // const [news, setNews] = useState([]);
   const [posts, setPosts] = useState([]);
 
   // useEffect(()=> {
@@ -29,42 +28,42 @@ function NewsApi() {
     const getPosts = async () => {
       console.log("Requesting posts");
       const response = await axios.get("http://localhost:4000/posts");
-      console.log(response.data[0]);
-      // setPosts(response.data.posts); 
+      console.log(response.data);
+      setPosts(response.data); 
     };
     getPosts();
   }, []);
 
+  const sendLikeToServer = async (id) => {
+    console.log("Post", id, "liked");
+    await axios.post("http://localhost:4000/likePost", { id });
+  }
 
-  // console.log("posts:\n",posts);
+  console.log("Posts: ", posts)
 
-//   return (
-//     <div className='App'>
-//       <NavigationBar />
-//       {news &&
-//         news.map((item,index) => {
-//           return (
+  return (
+    <div className='App'>
+      <NavigationBar />
+      {posts &&
+        posts.map((item,index) => {
+          return (
             
             
-//             // <Card 
-//             // key={index}
-//             // hoverable
-//             // style={{width: "70%"}}
-//             // conver={<img alt="" src={item.urlToImage}/>} 
-//             // >
-//             //   <Meta title={item.title} description={item.content}/>
-//             //   <a href={item.url} target="_blank" rel={"noopener noreferrer"}>
-//             //     <Button type="primary" style={{marginTop: "10px"}}>
-//             //       Read More
-//             //     </Button>
-//             //   </a>
-//               <button onClick={()=>{sendLikeToServer()}}>Like</button>
-//             /* </Card> */
-//           );
-//         })}
+            <Card 
+            key={index}
+            hoverable
+            style={{width: "70%"}}
+            >
+              <Meta title={item._id}/>
+              <h1>{item.body}</h1>
+              <button onClick={()=>{sendLikeToServer(item._id)}}>Like</button>
+              <h2>{item.likes}</h2>
+            </Card>
+          );
+        })}
 
-//     </div>
-//   );
+    </div>
+  );
 }
 
 export default NewsApi;
