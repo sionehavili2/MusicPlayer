@@ -2,16 +2,32 @@ import "./App.css";
 import Hello from "./components/HelloWorld";
 import SocketProvider from "./components/SocketProvider";
 import Rooms from "./components/Rooms";
+import { Routes, Route } from "react-router-dom";
+import HomePage from "./Pages/Home";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
+import 'bootstrap/dist/css/bootstrap.min.css'
+import SpotifyAuth  from "./components/spotifyAuth";
+import Dashboard from "./components/Dashboard";
+
+
+const code = new URLSearchParams(window.location.search).get('code')
+
 
 function App() {
-  return (
-    <>
-      <h1>At least 4</h1>
+  return code ? <Dashboard code ={code} /> : 
+    <div>
+      <Routes>
+        <Route path="" element={<HomePage />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        
+      </Routes>
+      <SpotifyAuth />
       <SocketProvider>
         <Rooms/>
       </SocketProvider>
-    </>
-  );
+    </div>  
 }
 
 export default App;
