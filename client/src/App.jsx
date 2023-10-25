@@ -1,6 +1,7 @@
 import "./App.css";
 import Hello from "./components/HelloWorld";
 import SocketProvider from "./components/SocketProvider";
+import Rooms from "./components/Rooms";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./Pages/Home";
 import Login from "./Pages/Login";
@@ -24,9 +25,10 @@ function App() {
         <Route path="" element={<HomePage />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-        <Route path="rooms" element={<SocketProvider><Rooms/></SocketProvider>} />        <Route path="rooms" element={<RoomPage />} />
+        <Route path="rooms" element={<SocketProvider><Rooms/></SocketProvider>} />
+        <Route path="rooms" element={<RoomPage />} />
       </Routes>
-      <SpotifyAuth />
+      {/* <SpotifyAuth /> */}
     </div>
   );  
 }
