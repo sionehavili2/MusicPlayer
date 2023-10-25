@@ -13,6 +13,7 @@ const NavigationBar = () => {
           <Nav.Link href="Login">Login</Nav.Link>
           <Nav.Link href="Register">Register</Nav.Link>
           <Nav.Link href="spotifyAuth">Spotify Login</Nav.Link>
+          <Nav.Link href="Rooms">Rooms</Nav.Link>
           {/* <Nav.Link href="How-To-Play">How-to-Play</Nav.Link>
           <Nav.Link href="deck">Deck</Nav.Link>
           <Nav.Link href="Scores">Scores</Nav.Link> */}
