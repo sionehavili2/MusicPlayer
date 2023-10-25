@@ -41,9 +41,9 @@ This is the final project for CS4760 for the group At Least 4. The goal of this 
 * Sione is going to work on setting up an interface so that we can add plugins down the line for functionality of the app.
 ### Sprint 3 (Oct 17 - Oct 26)
 * Gregor.io and Tyler will be working on getting the like button for posts working, as well as a form to create posts. The form will serve as a springboard for automated post creation (e.g. when a room is created, or a user likes a song), but that part will be easier once posts are able to get created.
-* Sione - I will rotate between all users to help them integrate their components. Additionally I will be adjusting and fixing any bugs or issues with interface.Once. Additionally I will continue to work on the rooms for additionally feature and music syncing.
-* Hayden - Working with Juan and Sione to fix the Spotify API to add to queue(400/500) Errors. Integrate this Spotify component into the rooms with Sione and Juan. Also trying to sync the Music up between users in the room.
-* Juan - Continue working with Hayden. Fix Authentication errors when making API requests (currently receiving 400/500 type errors from the API). Integrate rooms, with Sione, by allowing 2 users to add a song to the queue in the same room instance.
+* Sione will rotate between all users to help them integrate their components. Additionally he will be adjusting and fixing any bugs or issues with interface.Once. Additionally he will continue to work on the rooms for additionally feature and music syncing.
+* Hayden is working with Juan and Sione to fix the Spotify API to add to queue(400/500) Errors. Integrate this Spotify component into the rooms with Sione and Juan. Also trying to sync the Music up between users in the room.
+* Juan is going to continue working with Hayden. Fix Authentication errors when making API requests (currently receiving 400/500 type errors from the API). Integrate rooms, with Sione, by allowing 2 users to add a song to the queue in the same room instance.
 
 
 
