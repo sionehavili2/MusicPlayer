@@ -34,29 +34,15 @@ const SocketProvider = ({ children }) =>
     };
   }
 
-  /* All Audio Commands will run through here */
-  const listenForAudioCommands = (callback) => 
-  {
-    if (socket)
+  /* Sends data to all in room */
+    const sendToRoom = (roomNumber, dataToSend, callback) => 
     {
-      console.log("socket recieved audio command");
-      socket.on("audioCommand",(currentTrackPosition, isTrackPlaying)=>
+      if(socket)
       {
-        callback(currentTrackPosition, isTrackPlaying);
-      });
+        //console.log("socket : sendToRoom()");
+        socket.emit("sendToRoom",roomNumber, dataToSend, (dataFromRoom) => {console.log("socket: received room data"); callback(dataFromRoom)});
+      }
     }
-  }
-  
-
-/* Updates audio track position */
-const updateAudioTrackPosition = (roomNumber, trackPosition, timestamp) => 
-{
-    if(socket)
-    {
-      console.log("------- Socket: received from rooms: " + roomNumber + " --- " + trackPosition);
-      socket.emit("updateTrackPosition", roomNumber, trackPosition, timestamp);
-    }
-}
 
   /* All purpose send Data To Server */
   const sendDataToAll = (identifier , dataToSend) => 
@@ -68,59 +54,62 @@ const updateAudioTrackPosition = (roomNumber, trackPosition, timestamp) =>
     } 
   };
 
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /* All Audio Commands will run through here */
+  const listenForAudioCommands = (callback) => 
+  {
+    if (socket)
+    {
+      socket.on("newAudioData",(audioData)=>
+      {
+        callback(audioData);
+      });
+    }
+  }
+  
+  /* Updates audio track position */
+  const updateAudioTrackPosition = (roomNumber, trackPosition, timestamp) => 
+  {
+      if(socket)
+      {
+        //console.log("------- Socket: received from rooms: " + roomNumber + " --- " + trackPosition);
+        socket.emit("updateTrackPosition", roomNumber, trackPosition, timestamp);
+      }
+  }
+
   /* Creates a room and returns the room index number */
   const createRoom = (callback) => 
   {
     if (socket) 
     {
-      //console.log("create room function is running;");
-      socket.emit("createRoom", (roomNumber) => { console.log("socket received created room number:" + roomNumber); callback(roomNumber); });
+      socket.emit("createRoom", (roomNumber) => { callback(roomNumber); });
     }
   }
 
   /* Joins a room, must pass a room number and callback function */
-  const joinRoom = (roomNumber, callback) => 
+  const joinRoom = (roomNumber, clientCallBack) => 
   {
-    if (socket) 
-    {
-      //console.log("room number from socket:" + roomNumber);
-      socket.emit("joinRoom", roomNumber, (roomNumber, currentTrackPosition, isTrackPlaying, trackTimeStamp) => 
-      { 
-        console.log("socket received data for joinRoom callback" + roomNumber + "--" + currentTrackPosition + "--" + isTrackPlaying);
-        callback(roomNumber, currentTrackPosition, isTrackPlaying, trackTimeStamp);
-      });
-    }   
+    if (socket) { socket.emit("joinRoom", roomNumber, clientCallBack) }   
+  }
+  /* Joins a room, must pass a room number and callback function */
+  const leaveRoom = (roomNumber,) => 
+  {
+    if (socket) { socket.emit("leaveRoom", roomNumber)}   
   }
 
-  /* Sends data to all in room */
-  const sendToRoom = (roomNumber, dataToSend, callback) => 
+  const startStopAudio = (audioData) => 
   {
-    if(socket)
-    {
-       //console.log("socket : sendToRoom()");
-       socket.emit("sendToRoom",roomNumber, dataToSend, (dataFromRoom) => {console.log("socket: received room data"); callback(dataFromRoom)});
-    }
+    if (socket) socket.emit("startStopAudio", audioData);
   }
 
-  /* Play audio to room */
-  const playAudio = (roomNumber, audioTrackPosition) => 
-  {
-    //console.log("play audio clicked");
-    if(socket)
-    {
-      socket.emit("play", roomNumber, audioTrackPosition);
-    }
+  const listenForJoinRoomRequest = (thisCallBack) => 
+  { 
+    if (socket) socket.on("ServerPauseRequest", ()=>{thisCallBack()});
   }
 
-  /* Play audio to room */
-  const pauseAudio = (roomNumber, audioTrackPosition) => 
-  {
-    //console.log("pause audio clicked");
-    if(socket)
-    {
-      socket.emit("pause", roomNumber, audioTrackPosition);
-    }
-  }
+  const acceptJoinRoomRequest = (newUserData) => { if (socket) socket.emit("updateAllUsers", newUserData);}
 
   useEffect(() => 
   {
@@ -135,7 +124,7 @@ const updateAudioTrackPosition = (roomNumber, trackPosition, timestamp) =>
   }, [] );
 
   //Wrap Children and pass them call back functions and initial data
-  return (<SocketContext.Provider value={{ listenForAllData, listenForRoomData, listenForAudioCommands, updateAudioTrackPosition, sendDataToAll, createRoom, joinRoom, sendToRoom, playAudio, pauseAudio}}>{children}</SocketContext.Provider>);
+  return (<SocketContext.Provider value={{ listenForAllData, listenForRoomData, listenForAudioCommands,listenForJoinRoomRequest,acceptJoinRoomRequest, updateAudioTrackPosition, sendDataToAll, createRoom, joinRoom, sendToRoom, startStopAudio}}>{children}</SocketContext.Provider>);
 };
 
 export default SocketProvider;

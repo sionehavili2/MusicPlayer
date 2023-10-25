@@ -1,115 +1,149 @@
+
 import React, {useState, useEffect } from 'react';
 //IMPORTANT: call socket talker
 import { useSocket } from './SocketProvider'; 
 import AudioPlayer from './AudioPlayer';
 
+// const Rooms = () => 
+// {
+//   const [allRoomData, setAllRoomData] = useState({RoomNumber:null, HostID:null, HostName:null,});
+//   const [audioData, setAudioData] = useState({isplaying:true,initTrackPosition:10.5,});
+
+//   return <>
+//     <AudioPlayer {...audioData}/>
+//   </>
+// }
+
+// export default Rooms;
+
+
+
+
+
+
 function Rooms() {
 
   //IMPORTANT: grab data from SocketProvider
-  const {listenForAllData, listenForRoomData, sendDataToAll, sendToRoom, createRoom, joinRoom, playAudio,
-     pauseAudio, listenForAudioCommands, listenForAudioTrackPosition, updateAudioTrackPosition} = useSocket();
+  const { listenForAllData, listenForRoomData, listenForAudioCommands, listenForJoinRoomRequest, acceptJoinRoomRequest, updateAudioTrackPosition, 
+    sendDataToAll, createRoom, joinRoom, sendToRoom, startStopAudio} = useSocket();
   //all users varibles
   const [allData, setallData] = useState();
   const [allInput, setAllInput] = useState();
   //room variables
   const [roomInput, setRoomInput] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
+  const [roomNumber, setRoomNumber] = useState(null);
   const [roomData, setRoomData] = useState([]);
   //data identifier
   let messageDataIdentifier = "sendAMessageToAll";
   //Audio Variables
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackPosition, setCurrentTrackPosition] = useState(0);
-  const [currentTrackPositionTimeStamp, setCurrentTrackPositionTimeStamp] = useState(0);
+  const [immediateTrackPos, setImmediateTrackPos] = useState(0);
 
-  //Sending Data
-  const handleCreateRoom = () => 
-  {
-    createRoom((receivedRoomNumber) => {console.log("client received room number" + receivedRoomNumber); setRoomNumber(receivedRoomNumber);});
-  }
+  //Create a Room
+  const handleCreateRoom = () => {createRoom((receivedRoomNumber) => {setRoomNumber(receivedRoomNumber)})};
 
-  const handleJoinRoom = (roomNumber) => 
+  const handleJoinRoom = (roomNumberToJoin) => 
   {
-    joinRoom(roomNumber,(receivedRoomNumber, initialTrackPosition, isTrackPlaying, initialTrackTimeStamp) => 
+    joinRoom(roomNumberToJoin, officialInitialAudioData => 
     {
-      console.log("client joined room number: " + receivedRoomNumber + " --- " + initialTrackPosition + " --- " + isTrackPlaying + " --- " + initialTrackTimeStamp); 
-      setRoomNumber(receivedRoomNumber);
-      setCurrentTrackPosition(initialTrackPosition);
-      setCurrentTrackPositionTimeStamp(initialTrackTimeStamp);
-      setIsPlaying(isTrackPlaying);
-    });
-  }
+      console.log("client has recevied initialaudio data");
+      console.log(officialInitialAudioData);
+      setRoomNumber(officialInitialAudioData.roomNumber);
+      setCurrentTrackPosition(officialInitialAudioData.trackPosition);
+      setIsPlaying(officialInitialAudioData.isTrackPlaying);
+    })};
 
-  const handleSendToRoom = (roomData) => 
-  {
-    sendToRoom(roomNumber, roomData, (receivedData) =>{ /*console.log("client: received callback sendToRoom"); console.log(receivedData);*/ setRoomData(receivedData); });
-  }
+  // const handleSendToRoom = (roomData) => { sendToRoom(roomNumber, roomData, (receivedData) =>{ setRoomData(receivedData);});}
 
-  const handleSendToAll = (stringMessage) => 
-  {
-    sendDataToAll(messageDataIdentifier,stringMessage);
-  };
-
+  // const handleSendToAll = (stringMessage) => {sendDataToAll(messageDataIdentifier,stringMessage);};
+  
   const handleAudioCommand = (audioTrackPosition) => 
   {
-    isPlaying ? pauseAudio(roomNumber, audioTrackPosition) : playAudio(roomNumber, audioTrackPosition);
-  }
+    console.log("current audio track pos before setting:" + audioTrackPosition);
+    setIsPlaying(!isPlaying);
+    setCurrentTrackPosition(audioTrackPosition);
+    startStopAudio([!isPlaying, audioTrackPosition, !isPlaying ? new Date().getTime() : 0, roomNumber]);
+  };
 
-  const handleUpdateAudioTrackPosition = (audioPosition) =>
+  const handleImmediateTrackPosition = (newTrackPos) => 
   {
-    // console.log("room has received audio pos from  audio player:" + audioPosition);
-    // console.log("timestamp received:" + timeStamp);
-    let newTimeStamp = new Date().getTime();
-    updateAudioTrackPosition(roomNumber, audioPosition, newTimeStamp); 
+    setImmediateTrackPos(newTrackPos);
   }
+  
 
-  //Receiving Data
   useEffect(() => 
   {
-    listenForAllData((dataIdentifier, newData) => { if(dataIdentifier === "sendAMessageToAll") { console.log('client received data id['+dataIdentifier+']'); setallData(newData);}});
-    listenForRoomData((newRoomData) =>{console.log("client received room data ::"); console.log(newRoomData); setRoomData(newRoomData)})
-    listenForAudioCommands((updatedTrackPosition, isTrackPlaying) => 
+    // listenForAllData((dataIdentifier, newData) => { if(dataIdentifier === "sendAMessageToAll") { console.log('client received data id['+dataIdentifier+']'); setallData(newData);}});
+    // listenForRoomData((newRoomData) =>{console.log("client received room data ::"); console.log(newRoomData); setRoomData(newRoomData)})
+    
+    listenForAudioCommands((newAudioDataList) => 
     {
-      console.log("rooms received audio commands:" + updatedTrackPosition + ":" + isTrackPlaying);
-      setIsPlaying(isTrackPlaying);
-      setCurrentTrackPosition(updatedTrackPosition);
+      let incomingIsPlaying = newAudioDataList[0];
+      let thisTrackPos = newAudioDataList[1];
+      let incomingTimeStamp = newAudioDataList[2];
+      let adjustSync = incomingTimeStamp > 0 ? new Date().getTime() - incomingTimeStamp : 0;
+
+      console.log("time to adjust for sync : " + adjustSync);
+      console.log("incoming timestamp:" + incomingTimeStamp);
+      console.log("incoming track position: " + thisTrackPos);
+      adjustSync += thisTrackPos;
+      //setCurrentTrackPosition(adjustSync);
+      setCurrentTrackPosition(thisTrackPos);
+      setIsPlaying(incomingIsPlaying);
     });
 
-  }, [listenForAllData,listenForRoomData,listenForAudioCommands, allData, roomData, isPlaying, currentTrackPosition, currentTrackPositionTimeStamp]);
+    listenForJoinRoomRequest(()=>{console.log("host has recevied a pause request");});
+  
+    // listenForJoinRoomRequest((socketID, callBackForAudioData)=> 
+    // {
+    //   if(roomNumber)
+    //   {
+    //     console.log("received room request from :" + socketID);
+    //     //STILL NEED TO MAKE SURE YOUR CURRENT TRACK POS is updated
+    //     //callBackForAudioData([roomNumber,currentTrackPosition, isPlaying]);
+    //     acceptJoinRoomRequest([roomNumber,currentTrackPosition, isPlaying]);
+    //   } 
+    //   else console.log("ERROR: listenForJoinRoomRequest but roomNumber is invalid");
+    // });
+
+  }, [listenForAllData,listenForRoomData,allData, roomData, listenForAudioCommands, listenForJoinRoomRequest, roomNumber, isPlaying, currentTrackPosition]);
 
 const setDisplay = () => 
 {
-    if(roomNumber)
+    if(roomNumber == 0)
     {
       return (<>
         <div>You are in room : {roomNumber}</div>
-        <input value={roomInput} onChange={(event)=> {setRoomInput(event.target.value)}}/>
-        <button value={roomInput} onClick={(event)=> {handleSendToRoom(event.target.value)}}>send to Room: </button>
-
+        <div>Track Position : {currentTrackPosition}</div>
+        <div>immediate POS: {immediateTrackPos}</div>
         <AudioPlayer
           isPlaying={isPlaying}
           currentTrackPosition={currentTrackPosition}
-          timeStamp={currentTrackPositionTimeStamp}
-          onAudioCommand={(newCurrentTrackPosition)=>{handleAudioCommand(newCurrentTrackPosition)}}
-          onUpdateAudioTrackPos={(newTrackPos)=>{handleUpdateAudioTrackPosition(newTrackPos);}}
+          onAudioCommand={handleAudioCommand}
+          onImmediateTrackPos={handleImmediateTrackPosition}
         />
-        <p>Room Data: {roomData}</p>
-        
-        <div>------------------------------------------------------------------------------------------------------------</div>
-        
-        <input value={allInput} onChange={(event)=> {setAllInput(event.target.value)}}/>
+        {/* 
+          <input value={roomInput} onChange={(event)=> {setRoomInput(event.target.value)}}/>
+          <button value={roomInput} onClick={(event)=> {handleSendToRoom(event.target.value)}}>send to Room: </button>
+          <p>Room Data: {roomData}</p>
+          
+          <div>------------------------------------------------------------------------------------------------------------</div>
+          
+          <input value={allInput} onChange={(event)=> {setAllInput(event.target.value)}}/>
 
-        <button value={allInput} onClick={(event)=> {handleSendToAll(event.target.value)}}>Send To All</button>
-        <p>All Data: {allData}</p>
-
+          <button value={allInput} onClick={(event)=> {handleSendToAll(event.target.value)}}>Send To All</button>
+          <p>All Data: {allData}</p> */}
       </>);
     }
     else
     {
       return (
         <div>
+              <div>Room:{roomNumber}</div>
+              <div>IsPlaying:{isPlaying}</div>
               <button onClick={handleCreateRoom}>Create A Room</button>
-              <button value={2} onClick={(event)=> {handleJoinRoom(event.target.value)}}>Join Room 2</button>
+              <button value={0} onClick={(event)=> {handleJoinRoom(event.target.value)}}>Join Room 0</button>
         </div>
       );
     }
