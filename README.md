@@ -35,7 +35,15 @@ This is the final project for CS4760 for the group At Least 4. The goal of this 
 * Juan is going to set up the Authentication into a Mongo Database. This includes setting up secure data storage with encryption. He is also going to research News APIs.
 * Tyler is going to research APIs and work on getting a functioning news feed to show up on the front page. This is budgeted to take 6 hours.
 * Sione is going to research websocket communications and MERN interfaces to build a communication interface. He will also be looking into establishing room communication between users, and between the frontend and the backend.
-### Sprint 2 (Sept 26 - ..)
+### Sprint 2 (Sept 26 - Oct 12)
 * Gregor.io is going to continue documentation while also working with Tyler to flesh out the news feed with useful information from the back-end as well as data structures to hold statstics such as post likes and song likes and plays. This will then be stored in Mongo and pulled for each user.
 * Hayden and Juan are going to work on the Spotify API and getting that set up so that only one user needs to authenticate for a room to function. This will include passing information from the front-end to the back-end, which will then call the API and return that back to the front-end.
 * Sione is going to work on setting up an interface so that we can add plugins down the line for functionality of the app.
+### Sprint 3 (Oct 17 - Oct 26)
+* Gregor.io and Tyler will be working on getting the like button for posts working, as well as a form to create posts. The form will serve as a springboard for automated post creation (e.g. when a room is created, or a user likes a song), but that part will be easier once posts are able to get created.
+* Sione - I will rotate between all users to help them integrate their components. Additionally I will be adjusting and fixing any bugs or issues with interface.Once. Additionally I will continue to work on the rooms for additionally feature and music syncing.
+* Hayden - Working with Juan and Sione to fix the Spotify API to add to queue(400/500) Errors. Integrate this Spotify component into the rooms with Sione and Juan. Also trying to sync the Music up between users in the room.
+* Juan - Continue working with Hayden. Fix Authentication errors when making API requests (currently receiving 400/500 type errors from the API). Integrate rooms, with Sione, by allowing 2 users to add a song to the queue in the same room instance.
+
+
+
