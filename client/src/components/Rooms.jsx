@@ -16,11 +16,6 @@ import AudioPlayer from './AudioPlayer';
 
 // export default Rooms;
 
-
-
-
-
-
 function Rooms() {
 
   //IMPORTANT: grab data from SocketProvider
@@ -140,10 +135,10 @@ const setDisplay = () =>
     {
       return (
         <div>
-              <div>Room:{roomNumber}</div>
-              <div>IsPlaying:{isPlaying}</div>
-              <button onClick={handleCreateRoom}>Create A Room</button>
-              <button value={0} onClick={(event)=> {handleJoinRoom(event.target.value)}}>Join Room 0</button>
+          <div>Room:{roomNumber}</div>
+          <div>IsPlaying:{isPlaying}</div>
+          <button onClick={handleCreateRoom}>Create A Room</button>
+          <button value={0} onClick={(event)=> {handleJoinRoom(event.target.value)}}>Join Room 0</button>
         </div>
       );
     }

@@ -15,18 +15,18 @@ const code = new URLSearchParams(window.location.search).get('code')
 
 
 function App() {
+  
   return code ? <Dashboard code ={code} /> : 
     <div>
       <Routes>
         <Route path="" element={<HomePage />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-        
+        <Route path="rooms" element={<SocketProvider><Rooms/></SocketProvider>} />        
       </Routes>
       <SpotifyAuth />
-      <SocketProvider>
-        <Rooms/>
-      </SocketProvider>
+
+
     </div>  
 }
 
