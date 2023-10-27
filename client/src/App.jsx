@@ -9,8 +9,6 @@ import SpotifyAuth  from "./components/spotifyAuth";
 import Dashboard from "./components/Dashboard";
 import RoomPage from "./Pages/RoomPage";
 
-import NewsApi from "./Pages/NewsApi";
-
 
 const code = new URLSearchParams(window.location.search).get('code')
 
@@ -26,7 +24,6 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="rooms" element={<RoomPage />} />
-        <Route path="news" element={<NewsApi />} />
       </Routes>
       <SpotifyAuth />
     </div>
