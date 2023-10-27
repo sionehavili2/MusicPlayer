@@ -10,6 +10,7 @@ import { createBrotliCompress } from "zlib";
 import { Timestamp } from "mongodb";
 import { time, timeStamp } from "console";
 import { join } from "path";
+import { ObjectId } from "mongodb";
 import  React  from "react";
 import spotifyWebApi from "spotify-web-api-node";
 import bodyParser from 'body-parser';
@@ -198,6 +199,60 @@ app.post("/login", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
+});
+
+// Posts and likes
+// DATA STRUCTS
+const songTemplate = {
+  "song_id": 0,
+  // in the future, likes will be an array [] of usernames
+  "likes": 0,
+  "timesStreamed": 0
+}
+
+const postTemplate = {
+  "timestamp": 0,
+  "body": "",
+  "likes": 0,
+  "author": "",
+}
+
+// TODO: Move these after they are written
+app.post("/newPost", async (req, res) => {
+  let collection = await db.collection("posts");
+  const newPost = { ...postTemplate, "timestamp": new Date(), "body": req.body.body };
+  let result = await collection.insertOne(newPost);
+  res.send(result).status(204);
+});
+
+app.post("/likePost", async (req, res) => {
+  let { id } = req.body
+  let collection = await db.collection("posts");
+  const objectID = new ObjectId(id)
+  let result = await collection.updateOne({ _id: objectID}, { $inc: { likes: 1} });
+  res.send(result).status(204);
+})
+
+app.get("/posts", async (req, res) => {
+  let collection = await db.collection("posts");
+  let results = await collection.find({}).toArray();
+  console.log("results" + results);
+  // let results = await collection.find({}).sort({ timestamp: 1 }).toArray();
+  res.send(results).status(200);
+})
+
+app.post("/newSongRecord", async (req, res) => {
+  const songID = req.body.song_id;
+  let collection = await db.collection("songs");
+  let results = await collection.find({ song_id: songID });
+  if (await results.count() > 0) {
+    await collection.updateOne({ song_id: songID }, { $inc: { timesStreamed: 1} });
+    res.send("Play counter incremented")
+  } else {
+    const newSong = { ...songTemplate, song_id: songID };
+    await collection.insertOne(newSong);
+    res.send(result).status(204);
+  }
 });
 
 
