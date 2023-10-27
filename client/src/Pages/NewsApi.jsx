@@ -13,18 +13,7 @@ const {Meta} = Card;
 function NewsApi() {
   const [posts, setPosts] = useState([]);
 
-  // useEffect(()=> {
-  //   const loadNews = async () => {
-  //     const response = await axios.get(
-  //       "http://newsapi.org/v2/top-headlines?country=us&category=entertainment&apiKey=77d4ca45dba14d37807355344addcfc5"
-  //     );
-  //     setNews(response.data.articles);
-  //   };
-  //   loadNews();
-  // },[]);
-
   useEffect(() => {
-    console.log("HERE!");
     const getPosts = async () => {
       console.log("Requesting posts");
       const response = await axios.get("http://localhost:4000/posts");
@@ -34,7 +23,7 @@ function NewsApi() {
     getPosts();
   }, []);
 
-  const sendLikeToServer = async (id) => {
+  const handleLike = async (id) => {
     console.log("Post", id, "liked");
     await axios.post("http://localhost:4000/likePost", { id });
   }
@@ -56,7 +45,7 @@ function NewsApi() {
             >
               <Meta title={item._id}/>
               <h1>{item.body}</h1>
-              <button onClick={()=>{sendLikeToServer(item._id)}}>Like</button>
+              <button onClick={()=>{handleLike(item._id)}}>Like</button>
               <h2>{item.likes}</h2>
             </Card>
           );
