@@ -23,7 +23,11 @@ function App() {
         <Route path="" element={<HomePage />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+<<<<<<< HEAD
+        <Route path="news" element={<NewsApi/>}/>
+=======
         <Route path="rooms" element={<RoomPage />} />
+>>>>>>> parent of 11a6b090 (Merge branch 'News-Api')
       </Routes>
       <SpotifyAuth />
     </div>
