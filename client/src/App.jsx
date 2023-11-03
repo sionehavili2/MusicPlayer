@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import SpotifyAuth  from "./components/spotifyAuth";
 import Dashboard from "./components/Dashboard";
 import RoomPage from "./Pages/RoomPage";
+import NewsApi from "./Pages/NewsApi";
 
 
 const code = new URLSearchParams(window.location.search).get('code')
@@ -23,11 +24,8 @@ function App() {
         <Route path="" element={<HomePage />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-<<<<<<< HEAD
-        <Route path="news" element={<NewsApi/>}/>
-=======
         <Route path="rooms" element={<RoomPage />} />
->>>>>>> parent of 11a6b090 (Merge branch 'News-Api')
+        <Route path="news" element={<NewsApi />} />
       </Routes>
       <SpotifyAuth />
     </div>
