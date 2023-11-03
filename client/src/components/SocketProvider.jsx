@@ -99,6 +99,12 @@ const SocketProvider = ({ children }) =>
     if (socket) { socket.emit("leaveRoom", roomNumber)}   
   }
 
+  /*   */
+  const initialRoomCount = (clientCB) => 
+  {
+    if (socket) { socket.on("roomCount", (roomCount) => {clientCB(roomCount)})}
+  }
+
   const startStopAudio = (audioData) => 
   {
     if (socket) socket.emit("startStopAudio", audioData);
@@ -124,7 +130,7 @@ const SocketProvider = ({ children }) =>
   }, [] );
 
   //Wrap Children and pass them call back functions and initial data
-  return (<SocketContext.Provider value={{ listenForAllData, listenForRoomData, listenForAudioCommands,listenForJoinRoomRequest,acceptJoinRoomRequest, updateAudioTrackPosition, sendDataToAll, createRoom, joinRoom, sendToRoom, startStopAudio}}>{children}</SocketContext.Provider>);
+  return (<SocketContext.Provider value={{initialRoomCount, listenForAllData, listenForRoomData, listenForAudioCommands,listenForJoinRoomRequest,acceptJoinRoomRequest, updateAudioTrackPosition, sendDataToAll, createRoom, joinRoom, sendToRoom, startStopAudio}}>{children}</SocketContext.Provider>);
 };
 
 export default SocketProvider;

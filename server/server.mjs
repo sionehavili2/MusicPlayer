@@ -13,6 +13,7 @@ import { join } from "path";
 import  React  from "react";
 import spotifyWebApi from "spotify-web-api-node";
 import bodyParser from 'body-parser';
+import Rooms from "../client/src/Pages/Rooms";
 
 
 //const SpotifyWebApi = require("spotify-web-api-node")
@@ -209,8 +210,8 @@ const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", 
 
 //Audio Variable
 let initialRoomData = {roomNumber: null, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false};
-let Rooms = [];
 Rooms.push({roomNumber:0, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:null});
+let RoomCount = Rooms.length;
 
 //Socket connections
 io.on("connection", (socket) => {
@@ -230,6 +231,7 @@ io.on("connection", (socket) => {
 
   /////////// End of Debugging Functions /////////////
 
+  socket.emit("roomCount", RoomCount);
 
   // 1. Send to ALL CLIENTS
   socket.on("sendDataToAll",(listenName, dataFromClient) => 

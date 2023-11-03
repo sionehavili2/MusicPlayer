@@ -4,7 +4,7 @@ import React, {useState, useEffect } from 'react';
 import { useSocket } from '../components/SocketProvider'; 
 import AudioPlayer from '../components/AudioPlayer';
 import NavigationBar from "../components/Navigation";
-
+import Dashbaord from "../components/Dashboard";
 // const Rooms = () => 
 // {
 //   const [allRoomData, setAllRoomData] = useState({RoomNumber:null, HostID:null, HostName:null,});
@@ -20,7 +20,7 @@ import NavigationBar from "../components/Navigation";
 function Rooms() {
 
   //IMPORTANT: grab data from SocketProvider
-  const { listenForAllData, listenForRoomData, listenForAudioCommands, listenForJoinRoomRequest, acceptJoinRoomRequest, updateAudioTrackPosition, 
+  const {initialRoomCount, listenForAllData, listenForRoomData, listenForAudioCommands, listenForJoinRoomRequest, acceptJoinRoomRequest, updateAudioTrackPosition, 
     sendDataToAll, createRoom, joinRoom, sendToRoom, startStopAudio} = useSocket();
   //all users varibles
   const [allData, setallData] = useState();
@@ -70,6 +70,7 @@ function Rooms() {
 
   useEffect(() => 
   {
+    console.log(initialRoomCount);
     // listenForAllData((dataIdentifier, newData) => { if(dataIdentifier === "sendAMessageToAll") { console.log('client received data id['+dataIdentifier+']'); setallData(newData);}});
     // listenForRoomData((newRoomData) =>{console.log("client received room data ::"); console.log(newRoomData); setRoomData(newRoomData)})
     
@@ -89,7 +90,7 @@ function Rooms() {
       setIsPlaying(incomingIsPlaying);
     });
 
-    listenForJoinRoomRequest(()=>{console.log("host has recevied a pause request");});
+    //listenForJoinRoomRequest(()=>{console.log("host has recevied a pause request");});
   
     // listenForJoinRoomRequest((socketID, callBackForAudioData)=> 
     // {
@@ -107,6 +108,10 @@ function Rooms() {
 
 const setDisplay = () => 
 {
+    // if (!isLoggedIn)
+    // {
+    //   <Dashbaord/>
+    // }
     if(roomNumber == 0)
     {
       return (<>
