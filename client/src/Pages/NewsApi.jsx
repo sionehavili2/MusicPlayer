@@ -26,6 +26,14 @@ function NewsApi() {
   const handleLike = async (id) => {
     console.log("Post", id, "liked");
     await axios.post("http://localhost:4000/likePost", { id });
+    setPosts((prevPosts) => {
+      return prevPosts.map((post) => {
+        if (post._id === id) {
+          return { ...post, likes: post.likes + 1 };
+        }
+        return post;
+      });
+    });
   }
 
   console.log("Posts: ", posts)

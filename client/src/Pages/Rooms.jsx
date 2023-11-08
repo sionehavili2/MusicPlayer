@@ -5,6 +5,10 @@ import { useSocket } from '../components/SocketProvider';
 import AudioPlayer from '../components/AudioPlayer';
 import NavigationBar from "../components/Navigation";
 import Dashbaord from "../components/Dashboard";
+
+// stuff to create a post
+import axios from 'axios'
+// END
 // const Rooms = () => 
 // {
 //   const [allRoomData, setAllRoomData] = useState({RoomNumber:null, HostID:null, HostName:null,});
@@ -37,7 +41,10 @@ function Rooms() {
   const [immediateTrackPos, setImmediateTrackPos] = useState(0);
 
   //Create a Room
-  const handleCreateRoom = () => {createRoom((receivedRoomNumber) => {setRoomNumber(receivedRoomNumber)})};
+  const handleCreateRoom = () => {
+    createRoom((receivedRoomNumber) => {setRoomNumber(receivedRoomNumber)});
+    axios.post("http://localhost:4000/newPost");
+  };
 
   const handleJoinRoom = (roomNumberToJoin) => 
   {
