@@ -44,6 +44,11 @@ This is the final project for CS4760 for the group At Least 4. The goal of this 
 * Sione will rotate between all users to help them integrate their components. Additionally he will be adjusting and fixing any bugs or issues with interface.Once. Additionally he will continue to work on the rooms for additionally feature and music syncing.
 * Hayden is working with Juan and Sione to fix the Spotify API to add to queue(400/500) Errors. Integrate this Spotify component into the rooms with Sione and Juan. Also trying to sync the Music up between users in the room.
 * Juan is going to continue working with Hayden. Fix Authentication errors when making API requests (currently receiving 400/500 type errors from the API). Integrate rooms, with Sione, by allowing 2 users to add a song to the queue in the same room instance.
+### Sprint 4 (Oct 31 - Nov 9)
+* Sione will expand room features by providing host commands, host switching, and host integrity. and audio command/switching. All users can play/pause room audio. He will add host controls. Additionally he will need to implement a system should the host disconnect or close lobby. Also adding the ability to select all speakers or just 1 speaker. Additionally he will flush out audio controls. And room functionality..
+* Hayden will continue to work on the spotify lounge inside the rooms(room-spotify bug), also i will be adding the functionality of featured playlists, and add a random feature for categories.
+* Juan will continue working with Hayden to build the Spotify lounge inside of the rooms. Add functionality for featured and random playlists.
+* Tyler and Gregor.io will make the like count dynamic, be able to create posts, and fix the github issues that are causing the system to crash. We will also start implementing a voting system in the rooms
 
 
 
