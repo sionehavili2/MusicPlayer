@@ -1,6 +1,6 @@
 import NavigationBar from "../components/Navigation";
 import SocketProvider from "../components/SocketProvider";
-import Rooms from "../Pages/Rooms";
+import Rooms from "./Rooms";
 
 function RoomPage() {
   return (
