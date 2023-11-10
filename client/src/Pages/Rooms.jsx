@@ -4,6 +4,7 @@ import { useSocket } from '../components/SocketProvider.jsx';
 import Lobby from "../components/roomComponents/Lobby.jsx";
 import NewsApi from "./NewsApi.jsx";
 import AudioRoom from '../components/roomComponents/AudioRoom.jsx';
+import MusicPage from './MusicPage.jsx';
 
 function Rooms() 
 {
@@ -50,6 +51,7 @@ function Rooms()
         <>
           <AudioRoom {...audioRoomData} onUpdateAudioData={updateAudioHandler} onLeaveRoom={leaveRoomHandler}/>
           <NewsApi onSendNewsApiData={handleNewsApiData} apiFetchData={newsApiData}/>
+          <MusicPage />
         </>
       );
     }
