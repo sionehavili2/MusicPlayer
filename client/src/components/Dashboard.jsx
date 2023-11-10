@@ -6,6 +6,7 @@ import { Container, Form } from "react-bootstrap"
 import SpotifyWebApi from "spotify-web-api-node"
 import axios from "axios"
 import {Button} from "react-bootstrap"
+import RandomPlaylist from "./RandomPlaylist"
 
 
 const spotifyApi = new SpotifyWebApi({
@@ -88,6 +89,9 @@ export default function Dashboard({ code }) {
         ))}
        
       </div>
+          <RandomPlaylist 
+          accessToken={accessToken}
+      />
       <div>
         <Player accessToken={accessToken} trackUri={playingTrack?.uri} />
       </div>

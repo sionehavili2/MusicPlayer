@@ -1,31 +1,13 @@
 import React from "react"
 import {Button} from "react-bootstrap"
 import axios from 'axios';
+
 export default function TrackSearchResult({ track, chooseTrack, accessToken}) {
   
   function handlePlay() {
     chooseTrack(track)
   }
-  // function addSongToQue() {
-  //   console.log("this is track")
-  //   console.log(track.uri)
-  //   console.log(track)
-  //   console.log("this is track end")
-  //   axios
-  //     .post("http://localhost:4000/addToQue", {
-  //       trackUri: track.uri 
-  //     })
-  //     .then(res => {
-  //       console.log(res);
-  //       console.log("made it here 2")
-  //     })
-  //     .catch(error => {
-  //       console.error(error);
-  //     });
-  // }
 
-
-//axios.post(track.uri, data, {header})
   
   function addSongClient(){
     if (typeof track.uri !== 'string' || !/^spotify:track:[A-Za-z0-9]+$/.test(track.uri)) {

@@ -5,10 +5,10 @@ import HomePage from "./Pages/Home";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import 'bootstrap/dist/css/bootstrap.min.css'
-import SpotifyAuth  from "./components/spotifyAuth";
 import Dashboard from "./components/Dashboard";
 import RoomPage from "./Pages/RoomPage";
 import NewsApi from "./Pages/NewsApi";
+import MusicPage from "./Pages/MusicPage";
 
 
 const code = new URLSearchParams(window.location.search).get('code')
@@ -26,8 +26,8 @@ function App() {
         <Route path="register" element={<Register />} />
         <Route path="rooms" element={<RoomPage />} />
         <Route path="news" element={<NewsApi />} />
+        <Route path="music" element={<MusicPage />} />
       </Routes>
-      <SpotifyAuth />
     </div>
   );  
 }

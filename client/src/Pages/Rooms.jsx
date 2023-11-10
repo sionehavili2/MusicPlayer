@@ -148,6 +148,7 @@ const setDisplay = () =>
     {
       return (
         <div>
+          
           <div>Room:{roomNumber}</div>
           <div>IsPlaying:{isPlaying}</div>
           <button onClick={handleCreateRoom}>Create A Room</button>
