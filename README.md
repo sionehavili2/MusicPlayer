@@ -41,14 +41,19 @@ This is the final project for CS4760 for the group At Least 4. The goal of this 
 * Sione is going to work on setting up an interface so that we can add plugins down the line for functionality of the app.
 ### Sprint 3 (Oct 17 - Oct 26)
 * Gregor.io and Tyler will be working on getting the like button for posts working, as well as a form to create posts. The form will serve as a springboard for automated post creation (e.g. when a room is created, or a user likes a song), but that part will be easier once posts are able to get created.
-* Sione will rotate between all users to help them integrate their components. Additionally he will be adjusting and fixing any bugs or issues with interface.Once. Additionally he will continue to work on the rooms for additionally feature and music syncing.
+* Sione will rotate between all users to help them integrate their components. Additionally he will be adjusting and fixing any bugs or issues with interface.Once. Also, he will continue to work on the rooms for additionally feature and music syncing.
 * Hayden is working with Juan and Sione to fix the Spotify API to add to queue(400/500) Errors. Integrate this Spotify component into the rooms with Sione and Juan. Also trying to sync the Music up between users in the room.
 * Juan is going to continue working with Hayden. Fix Authentication errors when making API requests (currently receiving 400/500 type errors from the API). Integrate rooms, with Sione, by allowing 2 users to add a song to the queue in the same room instance.
 ### Sprint 4 (Oct 31 - Nov 9)
-* Sione will expand room features by providing host commands, host switching, and host integrity. and audio command/switching. All users can play/pause room audio. He will add host controls. Additionally he will need to implement a system should the host disconnect or close lobby. Also adding the ability to select all speakers or just 1 speaker. Additionally he will flush out audio controls. And room functionality..
+* Sione will expand room features by providing host commands, host switching, host integrity, and audio command/switching. All users can play/pause room audio. He will add host controls. Additionally he will need to implement a system should the host disconnect or close lobby. Also adding the ability to select all speakers or just 1 speaker. Additionally he will flush out audio controls. And room functionality..
 * Hayden will continue to work on the spotify lounge inside the rooms(room-spotify bug), also i will be adding the functionality of featured playlists, and add a random feature for categories.
 * Juan will continue working with Hayden to build the Spotify lounge inside of the rooms. Add functionality for featured and random playlists.
 * Tyler and Gregor.io will make the like count dynamic, be able to create posts, and fix the github issues that are causing the system to crash. We will also start implementing a voting system in the rooms
+### Sprint 5 (Nov 14 - Nov 28)
+* Juan will continue working with Hayden. This sprint we will focus on adding the selected playlist to the queue. This involves sending an API call to pull the songs in the playlist, then add the playlists to the queue. We will also fix a bug causing users to switch pages when entering the spotify dashboard. With remaining time we will start making visual improvements by introducing a color scheme or something of this nature.
+* Sione will finish up all room host commands, finish audio commands, and any room features/components that need adjustments/fixes. He will also start to design room UI
+* Hayden will continue working with Juan to build the final parts of the random playlists functionality. We will be sending the playlists that have been selected to the player for that unique room. We will also be cleaning up bugs for the final project (Rooms, etc…), and will work on making visual improvements.
+* Gregor.io and Tyler will get song likes working using the track.uri. Also, we will work on getting a new post each time a new song is added to the db (x song has streamed for the first time!)
 
 
 
