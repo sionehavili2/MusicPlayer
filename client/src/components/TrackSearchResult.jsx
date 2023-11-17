@@ -23,6 +23,7 @@ export default function TrackSearchResult({ track, chooseTrack, accessToken}) {
     // Construct the full API call
     const fullAPICall = `https://api.spotify.com/v1/me/player/queue/?uri=${track.uri}`;
     console.log(fullAPICall)
+    console.log("^full api request for adding to Que via Search bar")
     axios.post(fullAPICall, data, {headers})
         .then(res => {
            console.log(res);
