@@ -14,7 +14,6 @@ function Rooms()
   const [lobbyData, setLobbyData] = useState(null);
   const [audioRoomData, setAudioRoomData] = useState(null);
   const [incomingAudioData, setIncomingAudioData] = useState(null);
-  const [newsApiData, setNewsApiData] = useState({"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"3"},"author":"bob"});
 
   //1. get initial/updated lobby data && audioCommands
   useEffect(()=> 
@@ -46,13 +45,12 @@ function Rooms()
     {
       const updateAudioHandler = (newTrackPosition)=> {sendIt("startStopAudio", [audioRoomData.roomNumber, !audioRoomData.isTrackPlaying, newTrackPosition, new Date().getTime() + 5000]);} //5000 = 5 miliseconds
       const leaveRoomHandler = () =>{setAudioRoomData(null); setIncomingAudioData(null);}
-      const handleNewsApiData = () => {sendIt("newsApi", {"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"33343333"},"author":"bob"});}
 
       return (
         <>
           <AudioRoom {...audioRoomData} onUpdateAudioData={updateAudioHandler} onLeaveRoom={leaveRoomHandler}/>
-          <NewsApi onSendNewsApiData={handleNewsApiData} apiFetchData={newsApiData}/>
           <MusicPage />
+          <button onClick={() => console.log(trackID + " liked")}>Like</button>
         </>
       );
     }
