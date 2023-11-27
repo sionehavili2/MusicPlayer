@@ -5,6 +5,7 @@ import Lobby from "../components/roomComponents/Lobby.jsx";
 import NewsApi from "./NewsApi.jsx";
 import AudioRoom from '../components/roomComponents/AudioRoom.jsx';
 import MusicPage from './MusicPage.jsx';
+import axios from 'axios';
 
 function Rooms() 
 {
@@ -60,7 +61,10 @@ function Rooms()
     {
       const lobbyDataHandler = (roomNumberToJoin) => 
       {
-        if(roomNumberToJoin === "createRoom") {sendIt("createRoom",(returnedRoomData)=> {setAudioRoomData(returnedRoomData)})}
+        if(roomNumberToJoin === "createRoom") {sendIt("createRoom",(returnedRoomData) => {
+          setAudioRoomData(returnedRoomData)})
+          axios.post("http://localhost:4000/newPost")
+        }
         else {sendIt("joinRoom", roomNumberToJoin,(returnedRoomData)=> {setAudioRoomData(returnedRoomData)})}
       }
       return <Lobby roomCount={lobbyData} onSendLobbyData={lobbyDataHandler}></Lobby>
