@@ -148,7 +148,7 @@ function RandomPlaylist( {accessToken}){
             marginLeft: '13px',
             fontFamily: 'Ethos Nova, sans-serif',
             fontSize: '20px',
-            borderRadius: "10px",
+            borderRadius: "7px",
             padding:`10px`
           }}
       >
