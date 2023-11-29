@@ -21,7 +21,7 @@ function Rooms()
   //1. This will received lobby data that will populate open screen.
   useEffect(()=>{if(roomState === 0)onLobbyData((incomingLobbyData) => {setLobbyData(incomingLobbyData)});},[onLobbyData]);
   //2. if you are in a room, you can receive audio commands
-  useEffect(()=>{if(roomState === 1){onAudioRoomData((newAudioData)=> {if(newAudioData[0] === roomNumber){ console.log("appliying audio room data...."); setAudioRoomData(newAudioData[1]); if(newAudioData[2]){setRoomControls(newAudioData[2])} }})}},[roomState]);
+  useEffect(()=>{if(roomState === 1){onAudioRoomData((newAudioData)=> {if(newAudioData[0] === roomNumber){ console.log("appliying audio room data...."); setAudioRoomData((currData)=>({...currData,...newAudioData[1]})); if(newAudioData[2]){setRoomControls(newAudioData[2])} }})}},[roomState]);
   //4 If In Room, you can receive host controls
   useEffect(()=>{if(roomState === 1){onRoomControlData((newControls)=>{console.log("recieved room control..."); if(newControls[0]=== roomNumber){console.log("applying room controls..."); console.log(newControls); setRoomControls(newControls[1])}})}},[roomState]);
   
@@ -61,7 +61,7 @@ function Rooms()
       const AudioRoomMemo = React.memo(AudioRoom);
       
       return<>
-
+        {audioRoomData && !audioRoomData.host && <><h3>NO HOST</h3><button onClick={()=>{sendIt("beHost",roomNumber)}}>Be Host</button></>}
         {/* <RoomControl {...roomControls} isHost={audioRoomData.host === userID} onUpdateControls={(newControls)=>{sendIt("sendRoomControls",[roomNumber,newControls])}}/> */}
         <AudioRoomMemo {...audioRoomData} isHost={audioRoomData.host === userID}  roomControls={roomControls} roomNumber={roomNumber} onUpdateAudioData={handleUpdateAudio} onLeaveRoom={handleLeaveRoom}/>
       </>;

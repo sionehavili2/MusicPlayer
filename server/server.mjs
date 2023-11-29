@@ -262,7 +262,7 @@ const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", 
 
 //Audio Variable
 let Rooms = [];
-Rooms.push({trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:null});
+Rooms.push({roomNumber:0, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:null});
 
 let HostControls = [];
 HostControls.push({isHostControl:true, audioOutput:"all"})
@@ -279,7 +279,7 @@ io.on("connection", (socket) => {
   socket.on("createRoom", (createCB) => 
   {
     let createdRoomNumber = Rooms.length;
-    Rooms.push({trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:socket.id});
+    Rooms.push({roomNumber:createdRoomNumber, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:socket.id});
     HostControls.push({isHostControl:true, audioOutput:"all"});
     createCB([socket.id,createdRoomNumber, Rooms[createdRoomNumber],HostControls[createdRoomNumber]]);
     io.emit("lobbyData", [Rooms.length]);
@@ -320,19 +320,22 @@ io.on("connection", (socket) => {
     console.log(data);
     io.emit("receiveAll",identifier, data);
   })
+  // useEffect(()=>{if(roomState === 1){onAudioRoomData((newAudioData)=> {if(newAudioData[0] === roomNumber){ console.log("appliying audio room data...."); setAudioRoomData(newAudioData[1]); if(newAudioData[2]){setRoomControls(newAudioData[2])} }})}},[roomState]);
 
   /* 6 -- On Disconnect -- */
   socket.on("disconnect", ()=>
   {
-    console.log("user disconnected");
+    let counter = 0;
     Rooms.forEach(room => 
-    {
+    { 
       if(room.host === socket.id)
       {
         console.log("A Host has disconnected (function is not finished)....");
-        // Rooms[room.roomNumber].host = null;
-        // io.emit("audioCommand", Rooms[room.roomNumber]);
+        console.log(room);
+        room.host = null;
+        io.emit("audioCommand", [room.roomNumber,Rooms[room.roomNumber]]);
       }
+      counter++;
     })
   })
 
@@ -342,6 +345,12 @@ io.on("connection", (socket) => {
     HostControls[roomControlData[0]].audioOutput = roomControlData[1].audioOutput;
 
     io.emit("newRoomControls",[roomControlData[0], HostControls[roomControlData[0]]]);
+  })
+
+  socket.on("beHost",(newHostRoomNumber)=>
+  {
+    Rooms[newHostRoomNumber].host = socket.id; 
+    io.emit("audioCommand", [newHostRoomNumber,Rooms[newHostRoomNumber]]);
   })
 
 

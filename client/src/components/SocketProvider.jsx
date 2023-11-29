@@ -24,10 +24,10 @@ const SocketProvider = ({children}) =>
       else if (identifier === "joinRoom") socket.emit(identifier, arg, (receivedData) =>{cb(receivedData)})
       else if(identifier === "startStopAudio") socket.emit(identifier, arg);
       else if(identifier === "sendRoomControls") socket.emit(identifier, arg);
+      else if (identifier === "beHost") socket.emit(identifier,arg);
       // else if (identifier === "roomControls") socket.emit(identifier, arg);
       // else if (identifier === "newHostControls") socket.emit(identifier,arg);
       // else socket.emit("sendAll",identifier,arg);
-
     }
   }
 

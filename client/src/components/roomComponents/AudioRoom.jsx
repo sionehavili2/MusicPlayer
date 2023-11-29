@@ -91,7 +91,7 @@ const AudioRoom = (props) =>
       <h2>Audio Room {props.roomNumber}</h2>
       <RoomControl {...roomControls} isHost={props.isHost} onUpdateControls={(newControls)=>{props.onUpdateAudioData([audioRef.current.currentTime, newControls])}}/>
       <audio ref={audioRef}>
-        <source src="Passionfruit.mp3" type="audio/mpeg" />
+        <source src="Cupid.mp3" type="audio/mpeg" />
       </audio>
       <button onClick={handlePlayPauseBtn} disabled={buttonDisabled}>{props.isTrackPlaying ? 'Pause' : 'Play'}</button>
       <br/>
