@@ -8,6 +8,15 @@ const AudioRoom = (props) =>
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [roomControls, setRoomControls] = useState(null);
 
+  // if(!props.isHost && props.roomControls.isHostControl)
+  // {
+  //   setButtonDisabled(true);
+  // }
+
+  console.log(props.roomControls.isHostControl);
+  console.log(props.isHost);
+
+
   const handlePlayPauseBtn = () => 
   {
     props.onUpdateAudioData([audioRef.current.currentTime]);
@@ -18,7 +27,12 @@ const AudioRoom = (props) =>
   useEffect(()=>{setRoomControls(props.roomControls)},[props.roomControls]);
 
   useEffect(() => {
-  // Check if props.trackPosition is a finite number
+
+  if(!props.isHost && props.roomControls.isHostControl)
+  {
+    setButtonDisabled(true);
+  }
+    
   if (isFinite(props.trackPosition)) {
     audioRef.current.currentTime = props.trackPosition;
   }
@@ -35,10 +49,23 @@ const AudioRoom = (props) =>
     }
   };
 
-  if (props.isTrackPlaying) {
+  if (props.isTrackPlaying) 
+  {
     handlePlay();
   } else {
     handlePause();
+  }
+
+  console.log(props.roomControls.audioOutput);
+
+  if(!props.isHost && props.roomControls.audioOutput === "hostOnly")
+  {
+    setTimeout(() => {
+      if (audioRef.current) 
+      {
+        audioRef.current.pause();
+      }
+    }, 50); // Adjust the delay time as needed
   }
 
   // Set up event listeners
@@ -46,7 +73,6 @@ const AudioRoom = (props) =>
     audioRef.current.addEventListener('play', handlePlay);
     audioRef.current.addEventListener('pause', handlePause);
   }
-
   // Clean up event listeners
   return () => 
   {
