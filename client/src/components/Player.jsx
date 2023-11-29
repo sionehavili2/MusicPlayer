@@ -6,14 +6,14 @@ export default function Player({ accessToken, trackUri }) {
   const [trackID, setTrackID] = useState("")
 
   useEffect(() => {
-    setPlay(true), [trackUri]
-    console.log(trackID)
+    setPlay(true),
     setTrackID(trackUri)
-    console.log(trackID)
-  }, [trackID])
+  }, [trackUri])
 
   if (!accessToken) return null
   return (
+    <div>
+    <button onClick={() => console.log(trackID + " liked")}>Like</button>
     <SpotifyPlayer
       token={accessToken}
       showSaveIcon
@@ -23,5 +23,6 @@ export default function Player({ accessToken, trackUri }) {
       play={play}
       uris={trackUri ? [trackUri] : []}
     />
+    </div>
   )
 }

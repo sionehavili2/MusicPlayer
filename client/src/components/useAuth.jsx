@@ -5,12 +5,6 @@ export default function useAuth(code) {
   const [accessToken, setAccessToken] = useState()
   const [refreshToken, setRefreshToken] = useState()
   const [expiresIn, setExpiresIn] = useState()
-  // console.log("code")
-  //  console.log(code);
-  //  console.log("accessToken")
-  //  console.log(accessToken)
-  //  console.log("RefreshToken")
-  //  console.log(refreshToken)
  
   useEffect(() => {
     console.log("Inside Spotify Login Effect");
@@ -23,8 +17,14 @@ export default function useAuth(code) {
         setAccessToken(res.data.accessToken)
         setRefreshToken(res.data.refreshToken)
         setExpiresIn(res.data.expiresIn)
-       
-        window.history.pushState({}, null, "/Rooms")
+        const tokenData = {
+          accessToken: res.data.accessToken,
+          refreshToken: res.data.refreshToken,
+          expiresIn: res.data.expiresIn,
+        };
+        localStorage.setItem('authTokens', JSON.stringify(tokenData));
+        console.log(tokenData)
+        window.history.pushState({}, null, "/")
         
       })
       

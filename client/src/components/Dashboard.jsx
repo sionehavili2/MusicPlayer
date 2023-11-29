@@ -21,8 +21,8 @@ export default function Dashboard({ code }) {
   const [search, setSearch] = useState("")
   const [searchResults, setSearchResults] = useState([])
   const [playingTrack, setPlayingTrack] = useState()
-  console.log("dashboard code --")
-  console.log(codeForTrack)
+  // console.log("dashboard code --")
+  // console.log(codeForTrack)
   function chooseTrack(track) {
     setPlayingTrack(track)
     setSearch("")
@@ -72,15 +72,14 @@ export default function Dashboard({ code }) {
 
   return (
     <>
-    Here
-    <Container className="d-flex flex-column py-2" style={{ height: "50vh" }}>
+    <Container className="d-flex flex-column py-2" style={{ height: "100vh" }}>
       <Form.Control
         type="search"
         placeholder="Search Songs/Artists"
         value={search}
         onChange={e => setSearch(e.target.value)}
       />
-      <div className="flex-grow-1 my-2" style={{ overflowY: "auto" }}>
+      <div className="flex-grow-1 my-2" style={{ overflowY: "25vh" }}>
         {searchResults.map(track => (
           <TrackSearchResult
             track={track}

@@ -106,7 +106,7 @@ function RandomPlaylist( {accessToken}){
             <input category="Category" onChange={handleCategoryChange} />
           </label>
           <button onClick={addRandomMusicPlayList}>Add Category</button>
-          <button onClick={() => console.log(trackID + " liked")}>Like</button>
+          
           <div>
             {data ? (
               <div style={{ 
@@ -140,7 +140,7 @@ function RandomPlaylist( {accessToken}){
               setplaylistId3(playlist.id);
               console.log(playlistId3);
               addSelectedPlaylist();
-              window.scrollTo(0, document.body.scrollHeight);
+              // window.scrollTo(0, document.body.scrollHeight);
               console.log("Finished Adding Playlist");
            }}
            style={{
