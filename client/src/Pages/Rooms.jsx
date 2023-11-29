@@ -50,7 +50,6 @@ function Rooms()
         <>
           <AudioRoom {...audioRoomData} onUpdateAudioData={updateAudioHandler} onLeaveRoom={leaveRoomHandler}/>
           <MusicPage />
-          <button onClick={() => console.log(trackID + " liked")}>Like</button>
         </>
       );
     }
