@@ -1,4 +1,4 @@
-import express, { response } from "express";
+ import express, { response } from "express";
 import cors from "cors";
 import "./loadEnvironment.mjs";
 import db from "./db/conn.mjs";
@@ -262,23 +262,26 @@ const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", 
 
 //Audio Variable
 let Rooms = [];
-Rooms.push({roomNumber:0, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:null});
+Rooms.push({trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:null});
+
+let HostControls = [];
+HostControls.push({isHostControl:true, audioOutput:"all"})
 
 //Socket connections
 io.on("connection", (socket) => {
 
   // socket.on("connect", () => { console.log("client socket connected [" + socket.id + "]")});
 
-  /* 1 -- Send Initial Data -- */
+  /* 1 -- Send Initial Data for Room -- */
   socket.emit("lobbyData", [Rooms.length]);
 
   /* 2 -- Create a Room -- */
   socket.on("createRoom", (createCB) => 
   {
-    let index = Rooms.length;
-    console.log("creating Room: " + index);
-    Rooms.push({roomNumber: index, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:socket.id});
-    createCB(Rooms[index]);
+    let createdRoomNumber = Rooms.length;
+    Rooms.push({trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:socket.id});
+    HostControls.push({isHostControl:true, audioOutput:"all"});
+    createCB([socket.id,createdRoomNumber, Rooms[createdRoomNumber],HostControls[createdRoomNumber]]);
     io.emit("lobbyData", [Rooms.length]);
   });
   
@@ -286,7 +289,7 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (joinRoomIndex, joinCB) => 
   {
     console.log("Joining a room...: " + joinRoomIndex);
-    joinCB(Rooms[joinRoomIndex]);
+    joinCB([socket.id,joinRoomIndex,Rooms[joinRoomIndex],HostControls[joinRoomIndex]]);
   });
 
   /* 4 -- Play/Pause Audio -- */
@@ -296,7 +299,17 @@ io.on("connection", (socket) => {
     Rooms[roomIndex].isTrackPlaying = recentRoomAudio[1];
     Rooms[roomIndex].trackPosition = recentRoomAudio[2];
     Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
-    io.emit("audioCommand", Rooms[roomIndex]);
+
+    if(recentRoomAudio.length === 5) 
+    {
+      HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
+      HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
+      io.emit("audioCommand",[roomIndex, Rooms[roomIndex], HostControls[roomIndex]]);
+    }
+    else
+    {
+      io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
+    }
   })
 
   /* 5 -- Server recieves data and sends to all -- */
@@ -306,6 +319,29 @@ io.on("connection", (socket) => {
     console.log(identifier);
     console.log(data);
     io.emit("receiveAll",identifier, data);
+  })
+
+  /* 6 -- On Disconnect -- */
+  socket.on("disconnect", ()=>
+  {
+    console.log("user disconnected");
+    Rooms.forEach(room => 
+    {
+      if(room.host === socket.id)
+      {
+        console.log("A Host has disconnected (function is not finished)....");
+        // Rooms[room.roomNumber].host = null;
+        // io.emit("audioCommand", Rooms[room.roomNumber]);
+      }
+    })
+  })
+
+  /* 7 -- Host Control Commands --*/
+  socket.on("sendRoomControls", (roomControlData)=> {    
+    HostControls[roomControlData[0]].isHostControl = roomControlData[1].isHostControl;
+    HostControls[roomControlData[0]].audioOutput = roomControlData[1].audioOutput;
+
+    io.emit("newRoomControls",[roomControlData[0], HostControls[roomControlData[0]]]);
   })
 
 

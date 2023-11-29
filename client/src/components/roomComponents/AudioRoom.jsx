@@ -1,29 +1,23 @@
 import { useRef, useState, useEffect } from "react";
 import MusicList from "./MusicList";
+import RoomControl from "./RoomControls";
 
 const AudioRoom = (props) => 
 {
   const audioRef = useRef(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [roomControls, setRoomControls] = useState(null);
 
   const handlePlayPauseBtn = () => 
   {
-    props.onUpdateAudioData(audioRef.current.currentTime);
+    props.onUpdateAudioData([audioRef.current.currentTime]);
     setButtonDisabled(true);
-    setTimeout(() => {setButtonDisabled(false)}, 200); 
+    setTimeout(() => {setButtonDisabled(false)}, 200);  
   };
 
-  // useEffect(() => 
-  // {
-  //   audioRef.current.currentTime = props.trackPosition;
-  //   props.isTrackPlaying ? audioRef.current.play() :  audioRef.current.pause();
-  //   // return () => { console.log("audio player useffect CLEDANUP")}
-  // }, [props]);
+  useEffect(()=>{setRoomControls(props.roomControls)},[props.roomControls]);
 
-useEffect(() => {
-  console.log("track pos");
-  console.log(props.trackPosition);
-
+  useEffect(() => {
   // Check if props.trackPosition is a finite number
   if (isFinite(props.trackPosition)) {
     audioRef.current.currentTime = props.trackPosition;
@@ -54,7 +48,8 @@ useEffect(() => {
   }
 
   // Clean up event listeners
-  return () => {
+  return () => 
+  {
     // Check if audioRef.current is not null before removing listeners
     if (audioRef.current) {
       audioRef.current.removeEventListener('play', handlePlay);
@@ -62,12 +57,13 @@ useEffect(() => {
     }
   };
 
-}, [props]);
+},[props]);
 
 
    return (
     <div>
       <h2>Audio Room {props.roomNumber}</h2>
+      <RoomControl {...roomControls} isHost={props.isHost} onUpdateControls={(newControls)=>{props.onUpdateAudioData([audioRef.current.currentTime, newControls])}}/>
       <audio ref={audioRef}>
         <source src="Passionfruit.mp3" type="audio/mpeg" />
       </audio>

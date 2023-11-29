@@ -2,31 +2,47 @@ import { useState, useEffect} from "react";
 
 const RoomControl = (props) => 
 {
-    const [onlyHostControl, setOnlyHostControl] = useState();
-    const [onlyHostAudio, setOnlyHostAudio] = useState();
-
-    useEffect(()=>
-    {
-        props.onUpdateRoomControls([onlyHostAudio,onlyHostControl]);
-        
-    },[onlyHostAudio, onlyHostControl]);
-
+    console.log("roomcontrol");
+    console.log(props);
     return (
         <>
+            <h3>Host Controls</h3>
             <div>
-                <h3>Host Controls</h3>
-                <div>
-                    <>Play/Pause Controls : {" "}</>
-                    <button onClick={()=>{setOnlyHostControl(!onlyHostControl)}}>{onlyHostControl ? "Host only" : "Open Controls"}</button>
-                </div>
+                <>Play/Pause Controls : {" "}</>
+                <button onClick={()=>{props.onUpdateControls({isHostControl: !props.isHostControl, audioOutput: props.audioOutput})}}>{props.isHostControl ? "Host Only" : "All Members"}</button>
+            </div>
 
-                <div>
-                    <>Audio Output : {" "}</>
-                    <button onClick={()=>{setOnlyHostAudio(!onlyHostAudio)}}>{onlyHostAudio ? "Host Output" : "All Members Output"}</button>
-                </div>
+            <div>
+                <>Audio Output : {" "}</>
+                <button onClick={()=>{props.onUpdateControls({isHostControl: props.isHostControl, audioOutput: (props.audioOutput === "all" ? "hostOnly" : "all") })}}>{props.audioOutput}</button>
             </div>
         </>
     );
 }
 
 export default RoomControl;
+
+// import { useState, useEffect} from "react";
+
+// const RoomControl = (props) => 
+// {
+
+//     return (
+//         <>
+//             <>{props.isHost ? <h3>Host Controls</h3> : <h5>Host Settings</h5>}</>
+
+//             <div>
+                
+//                 <>{props.isHost &&<>Play/Pause Controls : {" "}<button onClick={()=>{props.onUpdateControls({isHostControl: !props.isHostControl, audioOutput: props.audioOutput})}}>{props.isHostControl ? "Host Only" : "All Members"}</button></>}</>
+//                 <>{!props.isHost &&<div>Play/Pause Controls : {" "}{props.isHostControl ? "Host Only" : "All Members"}</div>}</>
+//             </div>
+
+//             <div>
+//                 <>{props.isHost && <>Audio Output : {" "}<button onClick={()=>{props.onUpdateControls({isHostControl: props.isHostControl, audioOutput: (props.audioOutput === "all" ? "hostOnly" : "all")})}}>{props.audioOutput}</button></>}</>
+//                 <>{!props.isHost && <div>Audio Output : {" "}{props.audioOutput}</div>}</>
+//             </div>
+//         </>
+//     );
+// }
+
+// export default RoomControl;

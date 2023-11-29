@@ -4,237 +4,168 @@ import { useSocket } from '../components/SocketProvider.jsx';
 import Lobby from "../components/roomComponents/Lobby.jsx";
 import NewsApi from "./NewsApi.jsx";
 import AudioRoom from '../components/roomComponents/AudioRoom.jsx';
-import MusicPage from './MusicPage.jsx';
+import MusicList from '../components/roomComponents/MusicList.jsx';
+import RoomControl from '../components/roomComponents/RoomControls.jsx';
 
-function Rooms() 
+function Rooms()
 {
-  const { onLobbyData,onAudioCommand, onRecieveAll, sendIt} = useSocket();
-  
+  const { onLobbyData, onAudioRoomData, onRecieveAll, onRoomControlData, sendIt} = useSocket();
+
+  const [userID, setUserID] = useState(null);
+  const [roomState, setRoomState] = useState(0);
+  const [roomNumber, setRoomNumber] = useState(null);
   const [lobbyData, setLobbyData] = useState(null);
-  const [audioRoomData, setAudioRoomData] = useState(null);
-  const [incomingAudioData, setIncomingAudioData] = useState(null);
-  const [newsApiData, setNewsApiData] = useState({"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"3"},"author":"bob"});
-
-  //1. get initial/updated lobby data && audioCommands
-  useEffect(()=> 
+  const [audioRoomData,setAudioRoomData] = useState(null);
+  const [roomControls, setRoomControls] = useState(null);
+  
+  //1. This will received lobby data that will populate open screen.
+  useEffect(()=>{if(roomState === 0)onLobbyData((incomingLobbyData) => {setLobbyData(incomingLobbyData)});},[onLobbyData]);
+  //2. if you are in a room, you can receive audio commands
+  useEffect(()=>{if(roomState === 1){onAudioRoomData((newAudioData)=> {if(newAudioData[0] === roomNumber){ console.log("appliying audio room data...."); setAudioRoomData(newAudioData[1]); if(newAudioData[2]){setRoomControls(newAudioData[2])} }})}},[roomState]);
+  //4 If In Room, you can receive host controls
+  useEffect(()=>{if(roomState === 1){onRoomControlData((newControls)=>{console.log("recieved room control..."); if(newControls[0]=== roomNumber){console.log("applying room controls..."); console.log(newControls); setRoomControls(newControls[1])}})}},[roomState]);
+  
+  const displayRoomState = () => 
   {
-    onRecieveAll((identifier, data)=>
+    //2. If we have lobby data display Lobby
+    if(roomState === 0 && lobbyData)
     {
-      console.log("received all command....."); 
-      console.log(identifier); 
-      console.log(data);
-
-      switch (identifier) 
+      const handleSendLobbyData = (value)=>
       {
-        case "newsApi" : console.log("recived news api data..."); console.log(data); setNewsApiData(data); break;
-        default: console.log("onRecieveAll() failed to match identifier:" + identifier);
-      }
-    });
-    onLobbyData((incomingLobbyData)=>{setLobbyData(incomingLobbyData)});
-    onAudioCommand((incomingAudioCommand) => {setIncomingAudioData(incomingAudioCommand)});
-  },[lobbyData, onAudioCommand]);
-
-  //2. When you get a new incoming audio command, check and see if you belong to the room before applying data
-  useEffect(()=>{if(audioRoomData && incomingAudioData){if(audioRoomData.roomNumber === incomingAudioData.roomNumber) setAudioRoomData(incomingAudioData)}},[incomingAudioData]);
-
-  //FINAL Decide what to display
-  const setDisplay = () => 
-  {
-    //A. If you have Room data, display room info
-    if(audioRoomData)
-    {
-      const updateAudioHandler = (newTrackPosition)=> {sendIt("startStopAudio", [audioRoomData.roomNumber, !audioRoomData.isTrackPlaying, newTrackPosition, new Date().getTime() + 5000]);} //5000 = 5 miliseconds
-      const leaveRoomHandler = () =>{setAudioRoomData(null); setIncomingAudioData(null);}
-      const handleNewsApiData = () => {sendIt("newsApi", {"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"33343333"},"author":"bob"});}
-
-      return (
-        <>
-          <AudioRoom {...audioRoomData} onUpdateAudioData={updateAudioHandler} onLeaveRoom={leaveRoomHandler}/>
-          <NewsApi onSendNewsApiData={handleNewsApiData} apiFetchData={newsApiData}/>
-          <MusicPage />
-        </>
-      );
+        if(value === "createRoom") sendIt("createRoom", (returnedRoomData)=>{console.log("create room..."); console.log(returnedRoomData); setUserID(returnedRoomData[0]);setRoomNumber(returnedRoomData[1]); setAudioRoomData(returnedRoomData[2]);  setRoomControls(returnedRoomData[3]); setRoomState(1);}) 
+        else sendIt("joinRoom",parseInt(value),(returnedJoinRoomData)=>{console.log("join room..."); setUserID(returnedJoinRoomData[0]);setRoomNumber(returnedJoinRoomData[1]); setAudioRoomData(returnedJoinRoomData[2]);  setRoomControls(returnedJoinRoomData[3]); setRoomState(1);})
+      }      
+      return <>
+      <div>Room Number: {roomNumber}</div>
+      <Lobby incomingLobbyData={lobbyData} onSendLobbyData={handleSendLobbyData}/></>
     }
-    //B. Else if you have lobby Data, display lobbyf
-    else if(lobbyData)
+    //3. If You have audio room, display Audio Room
+    else if(roomState === 1 && audioRoomData)
     {
-      const lobbyDataHandler = (roomNumberToJoin) => 
+      const handleUpdateAudio = (audioRoomResponse) => 
       {
-        if(roomNumberToJoin === "createRoom") {sendIt("createRoom",(returnedRoomData)=> {setAudioRoomData(returnedRoomData)})}
-        else {sendIt("joinRoom", roomNumberToJoin,(returnedRoomData)=> {setAudioRoomData(returnedRoomData)})}
-      }
-      return <Lobby roomCount={lobbyData} onSendLobbyData={lobbyDataHandler}></Lobby>
+        if(audioRoomResponse.length === 1)
+        {
+
+          let newTrackPosition = audioRoomResponse;
+          sendIt("startStopAudio", [roomNumber, !audioRoomData.isTrackPlaying, newTrackPosition, new Date().getTime() + 5000])
+        }
+        else
+        {
+          let newTrackPosition = audioRoomResponse[0];
+          let newHostCommands =  audioRoomResponse[1];
+          sendIt("startStopAudio", [roomNumber, audioRoomData.isTrackPlaying, newTrackPosition, new Date().getTime() + 5000, newHostCommands]);
+        }
+      } 
+      const handleLeaveRoom = () => {setAudioRoomData(null);setRoomControls(null); setRoomNumber(null); setRoomState(0);}
+      const AudioRoomMemo = React.memo(AudioRoom);
+      
+      return<>
+
+        {/* <RoomControl {...roomControls} isHost={audioRoomData.host === userID} onUpdateControls={(newControls)=>{sendIt("sendRoomControls",[roomNumber,newControls])}}/> */}
+        <AudioRoomMemo {...audioRoomData} isHost={audioRoomData.host === userID}  roomControls={roomControls} roomNumber={roomNumber} onUpdateAudioData={handleUpdateAudio} onLeaveRoom={handleLeaveRoom}/>
+      </>;
     }
-    else return <div>setDisplay in Room.jsx error...</div>
-    
+    //1. If We dont have lobby data display loading
+    else return <div>Loading....</div>
   }
-  return setDisplay();
+  return displayRoomState();
 }
+
+
+
+// function Rooms() 
+// {
+//   const { onLobbyData,onAudioCommand, onRecieveAll, onControlCommands, sendIt} = useSocket();
+  
+//   const [userID, setUserID] = useState(null);
+//   const [lobbyData, setLobbyData] = useState(null);
+//   const [audioRoomData, setAudioRoomData] = useState(null);
+//   const [incomingAudioData, setIncomingAudioData] = useState(null);
+//   const [roomControlData, setRoomControlData] = useState(null);
+//   const [newsApiData, setNewsApiData] = useState({"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"3"},"author":"bob"});
+
+//   useEffect(()=> 
+//   {
+//     console.log("audio room data");
+//     console.log(audioRoomData);
+//     //1. If you are NOT in a room (no audioRoomData) listen for lobby Data
+//     if(!audioRoomData) onLobbyData((incomingLobbyData)=>{setLobbyData(incomingLobbyData)});
+//     //2. If you have a Room, and the incoming command is for your room, receive incomingAudioData and apply it to your RoomData
+//     if(audioRoomData && incomingAudioData){if(audioRoomData.roomNumber === incomingAudioData.roomNumber) setAudioRoomData(incomingAudioData);}
+//     //3. else If you dont having incomingAudioData then wait (listen for incoming audio Commands)
+//     else onAudioCommand((incomingAudioCommand) => {console.log("incoming audio data running...."); setIncomingAudioData(incomingAudioCommand)});
+
+//   });
+
+//   useEffect(()=>
+//   {
+//     onControlCommands((newControlData)=> 
+//     { 
+//     if(audioRoomData && audioRoomData.roomNumber === newControlData[0])
+//     {
+//       console.log("new")
+//       console.log(newControlData);
+//       setRoomControlData(newControlData[1]);
+//       setAudioRoomData((currentAudioRoomData)=>({...currentAudioRoomData, roomControls:newControlData[1]})) 
+//     }
+//   })});
+
+//   //1. get initial/updated lobby data && audioCommands
+//   useEffect(()=> 
+//   {
+//     onRecieveAll((identifier, data)=>
+//     {
+//       console.log("received all command....."); 
+//       console.log(identifier); 
+//       console.log(data);
+
+//       switch (identifier) 
+//       {
+//         case "newsApi" : console.log("recived news api data..."); console.log(data); setNewsApiData(data); break;
+//         default: console.log("onRecieveAll() failed to match identifier:" + identifier);
+//       }
+//     });
+//   },[onRecieveAll]);
+
+//   //FINAL Decide what to display
+//   const setDisplay = () => 
+//   {
+//     //A. If you are in a room (have audioRoomData) then display Audio Room
+//     if(audioRoomData && roomControlData)
+//     {
+//       return (
+//         <>
+//           <div>host controls: {JSON.stringify(roomControlData)}</div>
+//           <>{audioRoomData && !audioRoomData.host && <button>Be Host</button>}</>
+//           <RoomControl {...roomControlData} onUpdateControls={(newHostControls)=>{ console.log("room reports host contorl"); console.log(newHostControls);sendIt("newHostControls",[audioRoomData.roomNumber,newHostControls])}}/>
+//           <AudioRoom {...audioRoomData} onUpdateAudioData={(newTrackPosition)=> {sendIt("startStopAudio", [audioRoomData.roomNumber, !audioRoomData.isTrackPlaying, newTrackPosition, new Date().getTime() + 5000]);}} onLeaveRoom={() => {setAudioRoomData(null); setIncomingAudioData(null);}}/>
+//           <NewsApi onSendNewsApiData={() => {sendIt("newsApi", {"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"33343333"},"author":"bob"});}} apiFetchData={newsApiData}/>
+//         </>
+//       );
+//     }
+//     //B. Else if you have lobby Data, display Rooms to create/join
+//     else if(lobbyData)
+//     {
+//       const lobbyDataHandler = (roomNumberToJoin) => 
+//       {
+//         if(roomNumberToJoin === "createRoom") {sendIt("createRoom",(returnedCreateRoomData)=> {setUserID(returnedCreateRoomData[0]); setAudioRoomData(returnedCreateRoomData[1]); setRoomControlData(returnedCreateRoomData[2]);})}
+//         else 
+//         {
+//           sendIt("joinRoom", roomNumberToJoin, (returnedJoinRoomData)=> {setUserID(returnedJoinRoomData[0]); setAudioRoomData(returnedJoinRoomData[1]); setRoomControlData(returnedJoinRoomData[2]);});
+//         }
+//       }
+//       return <>
+//         <>{audioRoomData && <div>RoomNumber: {audioRoomData.roomNumber}</div>}</>
+//         <Lobby roomCount={lobbyData} onSendLobbyData={lobbyDataHandler}></Lobby>
+//       </>
+//     }
+//     else return <div>setDisplay in Room.jsx error...</div>
+    
+//   }
+//   return setDisplay();
+// }
 export default Rooms;
 
     
 
-      // if(roomNumber === 0 || roomNumber)
-      // {
-      //   return (<>
-      //     <h3>Room : {roomNumber}</h3>
-      //     <div>Track Position : {currentTrackPosition}</div>
-      //     <div>immediate POS: {immediateTrackPos}</div>
-      //     <AudioPlayer
-      //       isPlaying={isPlaying}
-      //       currentTrackPosition={currentTrackPosition}
-      //       onAudioCommand={handleAudioCommand}
-      //       onImmediateTrackPos={handleImmediateTrackPosition}
-      //     />
-      //     <button onClick={handleLeaveRoom}>Leave Room</button>
-      //     <NewsApi apiFetchData={newsApiData} onSendNewsApiData={handleNewsApiData}/>
-      //   </>);
-      // }
-      // else
-      // {
-      //   const buttons = [];
-
-      //   for (let i = 0; i < totalRooms; i++) 
-      //   {
-      //     buttons.push(<button key={i} value={i} onClick={(event) => handleJoinRoom(event.target.value)}>{i !== 0 ? "Join Room " + i : "Open Room"}</button>);
-      //   }
-
-      //   return (
-      //     <div>
-      //       <div>Count: {totalRooms}</div>
-      //       <div>Room:{roomNumber}</div>
-      //       <div>IsPlaying:{isPlaying}</div>
-      //       <button onClick={handleCreateRoom}>Create A Room</button>
-      //       <div>{buttons}</div>
-      //     </div>
-      //   );
-      // }
-    
-
-//   return setDisplay();
-//   const [newsApiData, setNewsApiData] = useState({"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"34"},"author":"bob"})
-//   //IMPORTANT: grab data from SocketProvider
-//   const {initialRoomCount, listenForAllData, listenForRoomData, listenForAudioCommands, listenForJoinRoomRequest, acceptJoinRoomRequest, updateAudioTrackPosition, 
-//     sendDataToAll, createRoom, joinRoom, sendToRoom, startStopAudio} = useSocket();
-//   //all users varibles
-//   const [allData, setallData] = useState();
-//   //room variables
-//   const [roomNumber, setRoomNumber] = useState(null);
-//   const [roomData, setRoomData] = useState([]);
-//   const [totalRooms, setTotalRooms] = useState(null);
-//   //data identifier
-//   let messageDataIdentifier = "sendAMessageToAll";
-//   //Audio Variables
-//   const [isPlaying, setIsPlaying] = useState(false);
-//   const [currentTrackPosition, setCurrentTrackPosition] = useState(0);
-//   const [immediateTrackPos, setImmediateTrackPos] = useState(0);
-
-//   //Create a Room
-//   const handleCreateRoom = () => {createRoom((receivedRoomNumber) => {setRoomNumber(receivedRoomNumber)})};
-
-//   const handleJoinRoom = (roomNumberToJoin) => 
-//   {
-//     console.log("room number it wants to join: " + roomNumberToJoin);
-//     joinRoom(roomNumberToJoin, officialInitialAudioData => 
-//     {
-//       console.log(officialInitialAudioData);
-//       setRoomNumber(officialInitialAudioData.roomNumber);
-//       setCurrentTrackPosition(officialInitialAudioData.trackPosition);
-//       setIsPlaying(officialInitialAudioData.isTrackPlaying);
-//     })};
-
-//   const handleLeaveRoom = () =>
-//   {
-
-//   }
-
-//   // const handleSendToRoom = (roomData) => { sendToRoom(roomNumber, roomData, (receivedData) =>{ setRoomData(receivedData);});}
-
-//   // const handleSendToAll = (stringMessage) => {sendDataToAll(messageDataIdentifier,stringMessage);};
-  
-//   const handleAudioCommand = (audioTrackPosition) => 
-//   {
-//     console.log("current audio track pos before setting:" + audioTrackPosition);
-//     setIsPlaying(!isPlaying);
-//     setCurrentTrackPosition(audioTrackPosition);
-//     startStopAudio([!isPlaying, audioTrackPosition, !isPlaying ? new Date().getTime() : 0, roomNumber]);
-//   };
-
-//   const handleImmediateTrackPosition = (newTrackPos) => 
-//   {
-//     setImmediateTrackPos(newTrackPos);
-//   }
-
-//   //new api
-//   const handleNewsApiData = () => 
-//   {
-//     sendDataToAll("newsApi", {"_id":{"$oid":"6528ad0a89029d75c06d3f63"},"timestamp":{"$numberInt":"2"},"body":"hello","likes":{"$numberLong":"33343333"},"author":"bob"});
-//   }
-  
-
-//   useEffect(() => 
-//   {
-//     // listenForAllData((dataIdentifier, newData) => { if(dataIdentifier === "sendAMessageToAll") { console.log('client received data id['+dataIdentifier+']'); setallData(newData);}});
-//     // listenForRoomData((newRoomData) =>{console.log("client received room data ::"); console.log(newRoomData); setRoomData(newRoomData)})
-//     initialRoomCount((roomCount)=> {setTotalRooms(roomCount)});
-//     listenForAllData((dataIdentifier, newData) => { if(dataIdentifier === "newsApi") { console.log('client received data id['+dataIdentifier+']');  setNewsApiData(newData);}});
-
-//     listenForAudioCommands((newAudioDataList) => 
-//     {
-//       if(newAudioDataList[3] === roomNumber)
-//       {
-//         let incomingIsPlaying = newAudioDataList[0];
-//         let thisTrackPos = newAudioDataList[1];
-//         let incomingTimeStamp = newAudioDataList[2];
-//         let adjustSync = incomingTimeStamp > 0 ? new Date().getTime() - incomingTimeStamp : 0;
-//         adjustSync += thisTrackPos;
-//         setCurrentTrackPosition(adjustSync);
-//         //setCurrentTrackPosition(thisTrackPos);
-//         setIsPlaying(incomingIsPlaying);
-//       }
-//     });
-
-//   }, [listenForAllData,listenForRoomData,allData, roomData, listenForAudioCommands, listenForJoinRoomRequest, roomNumber, isPlaying, currentTrackPosition, newsApiData, initialRoomCount]);
-
-// const setDisplay = () => 
-// {
-//     if(roomNumber === 0 || roomNumber)
-//     {
-//       return (<>
-//         <h3>Room : {roomNumber}</h3>
-//         <div>Track Position : {currentTrackPosition}</div>
-//         <div>immediate POS: {immediateTrackPos}</div>
-//         <AudioPlayer
-//           isPlaying={isPlaying}
-//           currentTrackPosition={currentTrackPosition}
-//           onAudioCommand={handleAudioCommand}
-//           onImmediateTrackPos={handleImmediateTrackPosition}
-//         />
-//         <button onClick={handleLeaveRoom}>Leave Room</button>
-//         <NewsApi apiFetchData={newsApiData} onSendNewsApiData={handleNewsApiData}/>
-//       </>);
-//     }
-//     else
-//     {
-//       const buttons = [];
-
-//       for (let i = 0; i < totalRooms; i++) 
-//       {
-//         buttons.push(<button key={i} value={i} onClick={(event) => handleJoinRoom(event.target.value)}>{i !== 0 ? "Join Room " + i : "Open Room"}</button>);
-//       }
-
-//       return (
-//         <div>
-//           <div>Count: {totalRooms}</div>
-//           <div>Room:{roomNumber}</div>
-//           <div>IsPlaying:{isPlaying}</div>
-//           <button onClick={handleCreateRoom}>Create A Room</button>
-//           <div>{buttons}</div>
-//         </div>
-//       );
-//     }
-//   }
-
-//   return setDisplay();
-// }
-// export default Rooms;
