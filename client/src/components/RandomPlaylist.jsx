@@ -92,7 +92,6 @@ function RandomPlaylist( {accessToken}){
           const response = await axios.post(apiCallAddToQue, null, { headers });
           console.log(response);
           console.log("add playlist to Queue");
-          window.scrollTo(0, document.body.scrollHeight);
         } catch (error) {
           console.log("error below");
           console.error(error);
@@ -140,6 +139,7 @@ function RandomPlaylist( {accessToken}){
               setplaylistId3(playlist.id);
               console.log(playlistId3);
               addSelectedPlaylist();
+              window.scrollTo(0, document.body.scrollHeight);
               console.log("Finished Adding Playlist");
            }}
            style={{
@@ -147,7 +147,9 @@ function RandomPlaylist( {accessToken}){
             color: 'white',
             marginLeft: '13px',
             fontFamily: 'Ethos Nova, sans-serif',
-            fontSize: '20px'
+            fontSize: '20px',
+            borderRadius: "10px",
+            padding:`10px`
           }}
       >
         Add Playlist to Queue
