@@ -8,7 +8,8 @@ const AUTH_URL =
 
 export default function spotifyAuth(){
 
-    function openNewWindow() {
+    function openNewWindow(e) {
+        e.preventDefault();
         const newWindow = window.open(AUTH_URL);
         if(newWindow){
             newWindow.focus()

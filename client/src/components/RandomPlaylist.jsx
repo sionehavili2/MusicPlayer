@@ -31,6 +31,7 @@ function RandomPlaylist( {accessToken}){
                addPlaylist(res.data)
                const ids = res.data.playlists.items.map((playlist) => playlist.id);
                setPlaylistIds(ids);
+               
             })
              .catch(error => {
                console.log("error below")
@@ -91,6 +92,7 @@ function RandomPlaylist( {accessToken}){
           const response = await axios.post(apiCallAddToQue, null, { headers });
           console.log(response);
           console.log("add playlist to Queue");
+          window.scrollTo(0, document.body.scrollHeight);
         } catch (error) {
           console.log("error below");
           console.error(error);
@@ -107,46 +109,66 @@ function RandomPlaylist( {accessToken}){
           <button onClick={addRandomMusicPlayList}>Add Category</button>
           <div>
             {data ? (
-              <div>
+              <div style={{ 
+              border: '1px solid #000', 
+              padding: '10px', 
+              borderRadius: '5px' }}>
+           {data.playlists.items.map((playlist, index) => (
+            <div key={index} style={{ 
+              marginBottom: '10px', 
+              border: '1px solid #121212',
+              padding: '10px',
+              borderRadius: '5px', 
+              backgroundColor: `#212121`,
+              color: 'b3b3b3',
+              fontFamily: 'Ethos Nova, sans-serif'}}>
+          {/* <p>{playlist.href}</p>
+          <p>playlist - id {playlist.id}</p> */}
 
-                {data.playlists.items.map((playlist, index) => (
-                  <div key={index}>
-                    <p>{playlist.href}</p>
-                    <p>playist - id {playlist.id}</p>
-                    <button
-                    onClick={() => {
-                        setplaylistId3(playlist.id);
-                        console.log(playlistId3)
-                        addSelectedPlaylist();
-                        console.log("Finished Adding Playlist")}}
-                    >Add Playlist to Queue</button>
-                    <p>{playlist.description}</p>
-                    {playlist.images && playlist.images.length > 0 && (
-                        <img
-                          src={playlist.images[0].url}
-                          style={{ height: "64px", width: "64px" }}
-                          alt={`Playlist Image ${index}`}
-                        />
-                        
-                        
-                    )}
-                  </div>
-                ))}
-              </div>
+      <p style={{ color: 'white',
+       fontFamily: 'Ethos Nova, sans-serif',
+       fontSize: `28px`}}>{playlist.description}</p>
+      {playlist.images && playlist.images.length > 0 && (
+        <img
+          src={playlist.images[0].url}
+          style={{ height: "180px", width: "180px" }}
+          alt={`Playlist Image ${index}`}
+        />
+      )} 
+      <button
+            onClick={() => {
+              setplaylistId3(playlist.id);
+              console.log(playlistId3);
+              addSelectedPlaylist();
+              console.log("Finished Adding Playlist");
+           }}
+           style={{
+            backgroundColor: '#535353', 
+            color: 'white',
+            marginLeft: '13px',
+            fontFamily: 'Ethos Nova, sans-serif',
+            fontSize: '20px'
+          }}
+      >
+        Add Playlist to Queue
+      </button>
+    </div>
+  ))}
+</div>
+
             ) : (
               <p> </p>
               )}
             </div>
       
-            {/* Display the saved playlist IDs */}
-            <div>
+            {/* <div>
               <p>Saved Playlist IDs:</p>
               <ul>
                 {playlistIds.map((id, index) => (
                   <li key={index}>{id}</li>
                 ))}
               </ul>
-            </div>
+            </div> */}
           </div>
         );
       }
