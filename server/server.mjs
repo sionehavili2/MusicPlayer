@@ -215,8 +215,9 @@ const postTemplate = {
 }
 
 app.post("/newPost", async (req, res) => {
-  let collection = await db.collection("posts");
-  const newPost = { ...postTemplate, "timestamp": new Date(), "body": "A new room as been created: {roomNumber placeholder}" };
+  let { body } = req.body
+  let collection = db.collection("posts");
+  const newPost = { ...postTemplate, "timestamp": new Date(), "body": body };
   let result = await collection.insertOne(newPost);
   res.send(result).status(204);
 });

@@ -7,7 +7,14 @@ export default function Player({ accessToken, trackUri }) {
   const [trackID, setTrackID] = useState("")
 
   useEffect(() => {
-    setPlay(true),
+    if (play) {
+      let message = trackID + " is now playing!"
+      axios.post("http://localhost:4000/newPost", { message })
+    }
+  }, [play]);
+
+  useEffect(() => {
+    setPlay(true), 
     setTrackID(trackUri)
   }, [trackUri])
 
