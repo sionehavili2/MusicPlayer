@@ -8,7 +8,8 @@ export default function Player({ accessToken, trackUri }) {
 
   useEffect(() => {
     if (play) {
-      let message = trackID + " is now playing!"
+      const message = `${trackID} is now playing`
+      console.log(message)
       axios.post("http://localhost:4000/newPost", { message })
     }
   }, [play]);
