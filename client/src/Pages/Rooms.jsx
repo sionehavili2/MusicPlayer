@@ -6,6 +6,7 @@ import NewsApi from "./NewsApi.jsx";
 import AudioRoom from '../components/roomComponents/AudioRoom.jsx';
 import MusicList from '../components/roomComponents/MusicList.jsx';
 import RoomControl from '../components/roomComponents/RoomControls.jsx';
+import axios from 'axios';
 
 function Rooms()
 {
@@ -32,12 +33,23 @@ function Rooms()
     {
       const handleSendLobbyData = (value)=>
       {
-        if(value === "createRoom") sendIt("createRoom", (returnedRoomData)=>{console.log("create room..."); console.log(returnedRoomData); setUserID(returnedRoomData[0]);setRoomNumber(returnedRoomData[1]); setAudioRoomData(returnedRoomData[2]);  setRoomControls(returnedRoomData[3]); setRoomState(1);}) 
+        if(value === "createRoom") sendIt("createRoom", (returnedRoomData)=>
+        {
+          console.log("create room..."); 
+          console.log(returnedRoomData); 
+          setUserID(returnedRoomData[0]);
+          setRoomNumber(returnedRoomData[1]); 
+          setAudioRoomData(returnedRoomData[2]);  
+          setRoomControls(returnedRoomData[3]); 
+          setRoomState(1);
+          axios.post("http://localhost:4000/newPost");
+        }) 
         else sendIt("joinRoom",parseInt(value),(returnedJoinRoomData)=>{console.log("join room..."); setUserID(returnedJoinRoomData[0]);setRoomNumber(returnedJoinRoomData[1]); setAudioRoomData(returnedJoinRoomData[2]);  setRoomControls(returnedJoinRoomData[3]); setRoomState(1);})
       }      
-      return <>
-      <div>Room Number: {roomNumber}</div>
-      <Lobby incomingLobbyData={lobbyData} onSendLobbyData={handleSendLobbyData}/></>
+      return (<>
+        <div>Room Number: {roomNumber}</div>
+        <Lobby incomingLobbyData={lobbyData} onSendLobbyData={handleSendLobbyData}/>
+      </>);
     }
     //3. If You have audio room, display Audio Room
     else if(roomState === 1 && audioRoomData)

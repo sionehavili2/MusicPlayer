@@ -215,8 +215,9 @@ const postTemplate = {
 }
 
 app.post("/newPost", async (req, res) => {
-  let collection = await db.collection("posts");
-  const newPost = { ...postTemplate, "timestamp": new Date(), "body": "A new room as been created: {roomNumber placeholder}" };
+  let { body } = req.body
+  let collection = db.collection("posts");
+  const newPost = { ...postTemplate, "timestamp": new Date(), "body": "This is working" };
   let result = await collection.insertOne(newPost);
   res.send(result).status(204);
 });
@@ -238,16 +239,16 @@ app.get("/posts", async (req, res) => {
 })
 
 app.post("/newSongRecord", async (req, res) => {
-  const songID = req.body.song_id;
-  let collection = await db.collection("songs");
-  let results = await collection.find({ song_id: songID });
-  if (await results.count() > 0) {
+  const songID = req.body;
+  let collection = db.collection("songs");
+  let results = collection.find({ song_id: songID });
+  if (results > 0) {
     await collection.updateOne({ song_id: songID }, { $inc: { timesStreamed: 1} });
     res.send("Play counter incremented")
   } else {
     const newSong = { ...songTemplate, song_id: songID };
     await collection.insertOne(newSong);
-    res.send(result).status(204);
+    res.send(results).status(204);
   }
 });
 

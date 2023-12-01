@@ -9,7 +9,7 @@ function MusicPage() {
         <div>
         <SpotifyAuth />
            {/* <Rooms />  */}
-           <Dashboard />   
+           {/* <Dashboard />    */}
         </div>
     )
 }
