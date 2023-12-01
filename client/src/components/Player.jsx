@@ -20,7 +20,6 @@ export default function Player({ accessToken, trackUri }) {
   }, [trackUri])
 
   const handleLike = async(e) => {
-    console.log(e)
     await axios.post("http://localhost:4000/newSongRecord", { e });
   }
 

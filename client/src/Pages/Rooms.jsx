@@ -7,7 +7,6 @@ import AudioRoom from '../components/roomComponents/AudioRoom.jsx';
 import MusicList from '../components/roomComponents/MusicList.jsx';
 import RoomControl from '../components/roomComponents/RoomControls.jsx';
 import axios from 'axios';
-import MusicPage from './MusicPage.jsx';
 
 function Rooms()
 {
@@ -50,7 +49,6 @@ function Rooms()
       return (<>
         <div>Room Number: {roomNumber}</div>
         <Lobby incomingLobbyData={lobbyData} onSendLobbyData={handleSendLobbyData}/>
-        <MusicPage />
       </>);
     }
     //3. If You have audio room, display Audio Room
