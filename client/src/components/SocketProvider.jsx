@@ -10,18 +10,24 @@ const SocketProvider = ({children}) =>
 
   const onLobbyData = (initCB) => {if (socket) {socket.on("lobbyData", (dataFromServer) => {initCB(dataFromServer)})}}
 
-  const onAudioCommand = (audioCb) => {if(socket){socket.on("audioCommand", (commandFromServer)=>{audioCb(commandFromServer)})}}
+  const onAudioRoomData = (audioCb) => {if(socket){socket.on("audioCommand", (commandFromServer)=>{audioCb(commandFromServer)})}}
 
   const onRecieveAll = (recieveCB) => {if(socket){socket.on("receiveAll", (identifier, data) => {recieveCB(identifier, data)})}}
+
+  const onRoomControlData = (hostCB) => {if(socket){socket.on("newRoomControls", (newControlData) => {hostCB(newControlData)})}}
 
   const sendIt = (identifier, arg, cb) => 
   {
     if (socket)
     {
-      if(identifier === "createRoom")socket.emit(identifier, (receivedData) =>{arg(receivedData)})
+      if(identifier === "createRoom") socket.emit(identifier, (receivedData) =>{arg(receivedData)})
       else if (identifier === "joinRoom") socket.emit(identifier, arg, (receivedData) =>{cb(receivedData)})
       else if(identifier === "startStopAudio") socket.emit(identifier, arg);
-      else socket.emit("sendAll",identifier,arg);
+      else if(identifier === "sendRoomControls") socket.emit(identifier, arg);
+      else if (identifier === "beHost") socket.emit(identifier,arg);
+      // else if (identifier === "roomControls") socket.emit(identifier, arg);
+      // else if (identifier === "newHostControls") socket.emit(identifier,arg);
+      // else socket.emit("sendAll",identifier,arg);
     }
   }
 
@@ -33,9 +39,9 @@ const SocketProvider = ({children}) =>
     return () => {socketInstance.disconnect()};
   }, [] );
 
-  return (<SocketContext.Provider value={{onLobbyData, onAudioCommand, onRecieveAll, sendIt}}>{children}</SocketContext.Provider>);
+  return (<SocketContext.Provider value={{onLobbyData, onAudioRoomData, onRecieveAll, onRoomControlData, sendIt}}>{children}</SocketContext.Provider>);
 
-   // const initialRoomCount = (clientCB) => 
+  // const initialRoomCount = (clientCB) => 
   // {
   //   if (socket) { socket.on("roomCount", (roomCount) => {clientCB(roomCount)})}
   // }
