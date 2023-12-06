@@ -1,5 +1,15 @@
 {
+  "homepage": "https://Junsiwoo45.github.io/MusicPlayerTest",
   "dependencies": {
+    "react-scripts": "^5.0.1",
     "simple-peer": "^9.11.1"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.0"
+  },
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "build": "react-scripts build"
   }
 }
