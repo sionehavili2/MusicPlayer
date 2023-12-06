@@ -54,6 +54,13 @@ This is the final project for CS4760 for the group At Least 4. The goal of this 
 * Sione will finish up all room host commands, finish audio commands, and any room features/components that need adjustments/fixes. He will also start to design room UI
 * Hayden will continue working with Juan to build the final parts of the random playlists functionality. We will be sending the playlists that have been selected to the player for that unique room. We will also be cleaning up bugs for the final project (Rooms, etc…), and will work on making visual improvements.
 * Gregor.io and Tyler will get song likes working using the track.uri. Also, we will work on getting a new post each time a new song is added to the db (x song has streamed for the first time!)
+### Sprint 6 (Nov 30 - Dec 7) 
+* Gregor.io will take the likes and dislikes and put them inside of the rooms instead of the Dashboard.
+* Hayden will figure out how to make a server and figuring out the host server. - (probably from my computer hosting).
+* Sione will add skip song capabilities for everyone. If one person skips the song, then it will skip for everyone in the room.
+* Juan will add Visual improvements by Adding CSS. He will also add a chat system inside of the rooms.
+* Everyone - Beta testing with computers in other rooms to see if everything works properly. Integrating code together.
+
 
 
 
