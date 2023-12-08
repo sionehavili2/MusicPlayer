@@ -1,12 +1,15 @@
 {
+  "homepage": "https://Junsiwoo45.github.io/MusicPlayerTest",
   "name": "client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "vite",
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && (cd ../server && npm",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

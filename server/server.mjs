@@ -54,6 +54,16 @@ function saltShaker(length) {
   }
   return salt;
 }
+app.get("/*", function (req, res){
+  res.sendFile(
+    path.join(__dirname, "../client/build/index.html"),
+    function(err){
+      if(err){
+        res.status(500).send(err);
+      }
+    }
+  )
+})
 
 //API SECTION BELOW
 
@@ -194,6 +204,8 @@ app.post("/login", async (req, res) => {
     }
   });
 });
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
