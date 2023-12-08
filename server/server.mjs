@@ -276,7 +276,7 @@ const io = new socketIOServer(server, {cors: { origin: "http://localhost:3000", 
 
 //Audio Variable
 let Rooms = [];
-Rooms.push({roomNumber:0, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:null});
+Rooms.push({roomNumber:0, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:null, songIndex:0,  skipVoteCount:0});
 
 let HostControls = [];
 HostControls.push({isHostControl:true, audioOutput:"all"})
@@ -293,7 +293,7 @@ io.on("connection", (socket) => {
   socket.on("createRoom", (createCB) => 
   {
     let createdRoomNumber = Rooms.length;
-    Rooms.push({roomNumber:createdRoomNumber, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:socket.id});
+    Rooms.push({roomNumber:createdRoomNumber, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:socket.id, songIndex:0, skipVoteCount:0});
     HostControls.push({isHostControl:true, audioOutput:"all"});
     createCB([socket.id,createdRoomNumber, Rooms[createdRoomNumber],HostControls[createdRoomNumber]]);
     io.emit("lobbyData", [Rooms.length]);
@@ -310,20 +310,124 @@ io.on("connection", (socket) => {
   socket.on("startStopAudio",(recentRoomAudio)=>
   {
     let roomIndex = recentRoomAudio[0];
-    Rooms[roomIndex].isTrackPlaying = recentRoomAudio[1];
-    Rooms[roomIndex].trackPosition = recentRoomAudio[2];
-    Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+    console.log("received room controls.." + recentRoomAudio[1])
+    console.log(recentRoomAudio);
 
-    if(recentRoomAudio.length === 5) 
+    if(recentRoomAudio[1] === "roomControls")
     {
+      console.log("room controls...");
       HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
       HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
+      Rooms[roomIndex].trackPosition = recentRoomAudio[2];
+      Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
       io.emit("audioCommand",[roomIndex, Rooms[roomIndex], HostControls[roomIndex]]);
     }
     else
     {
-      io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
+      if(recentRoomAudio[1] === "playPause")
+      {
+        Rooms[roomIndex].isTrackPlaying = !Rooms[roomIndex].isTrackPlaying;
+        Rooms[roomIndex].trackPosition = recentRoomAudio[2];
+        Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+        io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
+      }
+      else if(recentRoomAudio[1] === "skipSong")
+      {
+        Rooms[roomIndex].songIndex = recentRoomAudio[2]; 
+        Rooms[roomIndex].trackPosition = 0;
+        Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+        io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
+      }
+      else if(recentRoomAudio[1] === "skipVote")
+      {
+        console.log("received skip vote"  
+        );
+        console.log(recentRoomAudio);
+        Rooms[roomIndex].skipVoteCount = Rooms[roomIndex].skipVoteCount + 1;
+
+        //If song has been voted to be skipped
+        if(Rooms[roomIndex].skipVoteCount >= 2)
+        {
+          Rooms[roomIndex].songIndex = Rooms[roomIndex].songIndex + 1;
+          Rooms[roomIndex].trackPosition = 0;
+          Rooms[roomIndex].skipVoteCount = 0;
+          Rooms[roomIndex].trackTimeStamp = 0;
+        }
+        else
+        {
+          Rooms[roomIndex].trackPosition = recentRoomAudio[2];
+          Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+        }
+
+        io.emit("audioCommand", [roomIndex,Rooms[roomIndex]])        
+        // Rooms[roomIndex].trackPosition = recentRoomAudio[2];
+      }
+      // Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+      // io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
     }
+
+
+    // if(recentRoomAudio[1] === "playPause")
+    // {
+    //   console.log("recieved play pause...");
+
+    //   Rooms[roomIndex].isTrackPlaying = !Rooms[roomIndex].isTrackPlaying;
+    //   Rooms[roomIndex].trackPosition = recentRoomAudio[2];
+    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+
+    //   io.emit("audioCommand", [roomIndex,Rooms[roomIndex]])
+    // }
+    // else if(recentRoomAudio[1] === "roomControls")
+    // {
+    //   console.log("received room controls..");
+
+    //   Rooms[roomIndex].trackPosition = recentRoomAudio[2];
+    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+
+    //   HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
+    //   HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
+    //   io.emit("audioCommand",[roomIndex, Rooms[roomIndex], HostControls[roomIndex]]);
+    // }
+    // else if(recentRoomAudio[1] === "skipSong")
+    // {
+    //   console.log("recievd skip song...");
+    //   Rooms[roomIndex].songIndex = recentRoomAudio[2];
+    //   Rooms[roomIndex].trackPosition = 0;
+    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+    //   io.emit("audioCommand", [roomIndex, Rooms[roomIndex]]);
+    // }
+
+
+
+    // let roomIndex = recentRoomAudio[0];
+    
+
+    // //Received Song Track 
+    // if(recentRoomAudio.length === 2)
+    // {
+    //   //Send to room new song track
+    //   Rooms[roomIndex].songIndex = recentRoomAudio[1];
+    //   Rooms[roomIndex].trackPosition = 0;
+    //   io.emit("audioCommand", [roomIndex, Rooms[roomIndex]])
+    // }
+    // //Recevied new SongData and/or newControls
+    // else
+    // {
+    //   Rooms[roomIndex].isTrackPlaying = recentRoomAudio[1];
+    //   Rooms[roomIndex].trackPosition = recentRoomAudio[2];
+    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+
+    //   if(recentRoomAudio.length === 5) 
+    //   {
+    //     HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
+    //     HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
+    //     io.emit("audioCommand",[roomIndex, Rooms[roomIndex], HostControls[roomIndex]]);
+    //   }
+    //   else
+    //   {
+    //     io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
+    //   }
+    // }
   })
 
   /* 5 -- Server recieves data and sends to all -- */

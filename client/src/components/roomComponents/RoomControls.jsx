@@ -2,8 +2,6 @@ import { useState, useEffect} from "react";
 
 const RoomControl = (props) => 
 {
-    console.log("roomcontrol");
-    console.log(props);
     return (
         <>
             <>{props.isHost ? <h3>Host Controls</h3> : <h5>Host Settings</h5>}</>

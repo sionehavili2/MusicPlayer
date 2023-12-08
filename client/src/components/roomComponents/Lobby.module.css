@@ -1,0 +1,36 @@
+* {
+    margin: 0 auto;
+}
+
+.mainContainer 
+{
+    border: 5px solid green;
+    justify-content: center;
+    margin:1.75em;
+}
+
+.mainContainer > * 
+{
+    border: 5px solid blue;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.button 
+{
+    border: 5px solid pink;
+}
+
+.createBtn
+{
+    border: 5px solid red;
+    width: 100%;
+}
+
+.button, .createBtn 
+{
+    width: 100%;
+    background-color: #535353;
+    color: white;
+    border-radius: 7px;
+}

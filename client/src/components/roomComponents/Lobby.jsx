@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import classes from "./Lobby.module.css";
 
 const Lobby = (props) => 
 {
@@ -8,15 +9,15 @@ const Lobby = (props) =>
 
     for (let i = 0; i < totalRooms; i++) 
     {
-        roomBtns.push(<button key={i} value={i} onClick={(event) => props.onSendLobbyData(event.target.value)}>{i !== 0 ? "Join Room " + i : "Open Room"}</button>);
+        roomBtns.push(<button className={classes.button} key={i} value={i} onClick={(event) => props.onSendLobbyData(event.target.value)}>{i !== 0 ? "Join Room " + i : "Open Room"}</button>);
     }
 
     return (
-        <>
-            <h2>Lobby</h2>
-            <button value="createRoom" onClick={(event)=>{props.onSendLobbyData(event.target.value)}}>Create A Room</button>
+        <div className={classes.mainContainer}>
+            <h2>Rooms Lobby</h2>
+            <div><button className={classes.createBtn} value="createRoom" onClick={(event)=>{props.onSendLobbyData(event.target.value)}}>Create A Room</button></div>
             <div>{roomBtns}</div>
-        </>
+        </div>
     );
 }
 
