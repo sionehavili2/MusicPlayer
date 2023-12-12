@@ -61,7 +61,6 @@ function Rooms()
       return (<>
         <div>Room Number: {roomNumber}</div>
         <Lobby incomingLobbyData={lobbyData} onSendLobbyData={handleSendLobbyData}/>
-        <MusicPage />
       </>);
     }
     //3. If You have audio room, display Audio Room

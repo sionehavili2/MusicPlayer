@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import MusicList from "./MusicList";
 import RoomControl from "./RoomControls";
+import axios from "axios";
 
 const AudioRoom = (props) => 
 {
@@ -24,6 +25,22 @@ const AudioRoom = (props) =>
     setButtonDisabled(true);
     setTimeout(() => {setButtonDisabled(false)}, 200);  
   };
+
+  const handleLike = async (e) => {
+    console.log("here " + songList[props.songIndex]) 
+    const send = {
+      song: songList[props.songIndex]
+    };
+    await axios
+      .post("http://localhost:4000/likeSong", send)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log("Error, couldn't log in here");
+        console.log(err.message);
+      });
+  }
 
   useEffect(()=>{setRoomControls(props.roomControls)},[props.roomControls]);
 
@@ -67,8 +84,10 @@ const AudioRoom = (props) =>
       <audio ref={audioRef} controls>
         <source type="audio/mpeg" />
       </audio>
+      <br />
       <button onClick={handlePlayPauseBtn} disabled={buttonDisabled}>{props.isTrackPlaying ? 'Pause' : 'Play'}</button>
       <button onClick={handleSkip} disabled={buttonDisabled}>Skip</button>
+      <button onClick={handleLike}>Like</button>
       <br/>
       <br/>
       <button onClick={()=>{props.onLeaveRoom()}}>Leave Room</button>
