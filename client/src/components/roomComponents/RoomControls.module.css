@@ -1,0 +1,52 @@
+* {margin: 0 auto; padding: 0 auto;}
+
+body {
+    width: 100%;
+    height: 100vh;
+}
+
+.mainContainer {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 0.5em 0.5em 0.5em 0;
+    color: white;
+    border-radius: 10px;
+    width: 96%;
+    margin-bottom: 0.5em;
+}
+
+.mainContainer > div
+{
+    width: 100%;
+    height: 100%;
+}
+
+.mainContainer > *:first-child 
+{
+    border-radius: 0 5px 5px 0;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.button 
+{
+    background-color: rgba(0, 0, 0, 0.4);
+    color:white;
+    border-radius: 7.5px;
+    padding: 0.1em 0.75em 0.1em 0.75em;
+}
+
+/* .mainContainer > * {
+    border: 5px solid green;
+} */
+
+.hostBtn {
+    background-color: rgba(253, 0, 0, 0.4);
+    color:white;
+    border-radius: 7.5px;
+    padding: 0.1em 0.75em 0.1em 0.75em;
+    width: 100%;
+}

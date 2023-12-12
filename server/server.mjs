@@ -302,7 +302,6 @@ io.on("connection", (socket) => {
   /* 3. -- Join a Room -- */
   socket.on("joinRoom", (joinRoomIndex, joinCB) => 
   {
-    console.log("Joining a room...: " + joinRoomIndex);
     joinCB([socket.id,joinRoomIndex,Rooms[joinRoomIndex],HostControls[joinRoomIndex]]);
   });
 
@@ -310,12 +309,8 @@ io.on("connection", (socket) => {
   socket.on("startStopAudio",(recentRoomAudio)=>
   {
     let roomIndex = recentRoomAudio[0];
-    console.log("received room controls.." + recentRoomAudio[1])
-    console.log(recentRoomAudio);
-
     if(recentRoomAudio[1] === "roomControls")
     {
-      console.log("room controls...");
       HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
       HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
       Rooms[roomIndex].trackPosition = recentRoomAudio[2];
@@ -336,13 +331,11 @@ io.on("connection", (socket) => {
         Rooms[roomIndex].songIndex = recentRoomAudio[2]; 
         Rooms[roomIndex].trackPosition = 0;
         Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
+        Rooms[roomIndex].skipVoteCount = 0;
         io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
       }
       else if(recentRoomAudio[1] === "skipVote")
       {
-        console.log("received skip vote"  
-        );
-        console.log(recentRoomAudio);
         Rooms[roomIndex].skipVoteCount = Rooms[roomIndex].skipVoteCount + 1;
 
         //If song has been voted to be skipped
@@ -360,74 +353,8 @@ io.on("connection", (socket) => {
         }
 
         io.emit("audioCommand", [roomIndex,Rooms[roomIndex]])        
-        // Rooms[roomIndex].trackPosition = recentRoomAudio[2];
       }
-      // Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
-      // io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
     }
-
-
-    // if(recentRoomAudio[1] === "playPause")
-    // {
-    //   console.log("recieved play pause...");
-
-    //   Rooms[roomIndex].isTrackPlaying = !Rooms[roomIndex].isTrackPlaying;
-    //   Rooms[roomIndex].trackPosition = recentRoomAudio[2];
-    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
-
-    //   io.emit("audioCommand", [roomIndex,Rooms[roomIndex]])
-    // }
-    // else if(recentRoomAudio[1] === "roomControls")
-    // {
-    //   console.log("received room controls..");
-
-    //   Rooms[roomIndex].trackPosition = recentRoomAudio[2];
-    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
-
-    //   HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
-    //   HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
-    //   io.emit("audioCommand",[roomIndex, Rooms[roomIndex], HostControls[roomIndex]]);
-    // }
-    // else if(recentRoomAudio[1] === "skipSong")
-    // {
-    //   console.log("recievd skip song...");
-    //   Rooms[roomIndex].songIndex = recentRoomAudio[2];
-    //   Rooms[roomIndex].trackPosition = 0;
-    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
-    //   io.emit("audioCommand", [roomIndex, Rooms[roomIndex]]);
-    // }
-
-
-
-    // let roomIndex = recentRoomAudio[0];
-    
-
-    // //Received Song Track 
-    // if(recentRoomAudio.length === 2)
-    // {
-    //   //Send to room new song track
-    //   Rooms[roomIndex].songIndex = recentRoomAudio[1];
-    //   Rooms[roomIndex].trackPosition = 0;
-    //   io.emit("audioCommand", [roomIndex, Rooms[roomIndex]])
-    // }
-    // //Recevied new SongData and/or newControls
-    // else
-    // {
-    //   Rooms[roomIndex].isTrackPlaying = recentRoomAudio[1];
-    //   Rooms[roomIndex].trackPosition = recentRoomAudio[2];
-    //   Rooms[roomIndex].trackTimeStamp = recentRoomAudio[3];
-
-    //   if(recentRoomAudio.length === 5) 
-    //   {
-    //     HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
-    //     HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
-    //     io.emit("audioCommand",[roomIndex, Rooms[roomIndex], HostControls[roomIndex]]);
-    //   }
-    //   else
-    //   {
-    //     io.emit("audioCommand", [roomIndex,Rooms[roomIndex]]);
-    //   }
-    // }
   })
 
   /* 5 -- Server recieves data and sends to all -- */
@@ -467,96 +394,10 @@ io.on("connection", (socket) => {
 
   socket.on("beHost",(newHostRoomNumber)=>
   {
+    console.log("reached best host command");
     Rooms[newHostRoomNumber].host = socket.id; 
     io.emit("audioCommand", [newHostRoomNumber,Rooms[newHostRoomNumber]]);
   })
-
-
-  // // 1. Send to ALL CLIENTS
-  // socket.on("sendDataToAll",(listenName, dataFromClient) => 
-  // {
-  //   io.emit("sendDataToAllClients",listenName,dataFromClient);
-  // });
-
-  // // 2. When a user sends data to room
-  // socket.on("sendToRoom",(roomIndex, dataSendToAll, callBackFunction) => 
-  // {
-  //   io.to(roomIndex).emit("sendToRoom",dataSendToAll);
-  //   callBackFunction(dataSendToAll);
-  // })
-
-
-  // // 3. When a user creates a room
-  // socket.on("createRoom", (callBackFunction)=>
-  // {
-  //   console.log("create room: " + Rooms.length);
-  //   console.log("BEFORE.....");
-  //   console.log(Rooms);
-  //   Rooms.push({roomNumber: Rooms.length, trackPosition:0, trackTimeStamp:0, isTrackPlaying:false, partyCount:0, host:socket.id});
-
-  //   let roomIndex = Rooms.length - 1;
-  //   Rooms[roomIndex].roomNumber = roomIndex;
-  //   socket.join(Rooms[roomIndex].roomNumber);
-  //   callBackFunction(Rooms[roomIndex].roomNumber);
-  //   socket.emit("roomCount", Rooms.length);
-  //   console.log("AFTER....");
-  //   console.log(Rooms);
-  //   // Create a post when a room is created
-  // });
-
-  // // 4. When a user requests to joins a room
-  // socket.on("joinRoom", (roomIndex, callBackFunction)=>
-  // {
-  //   console.log("room index to join: " + roomIndex);
-  //   if (!Rooms[roomIndex].host) 
-  //   {
-  //     Rooms[roomIndex].host = socket.id;
-  //   }
-
-  //   console.log(Rooms[roomIndex]);
-  //   console.log("------")
-  //   socket.join(roomIndex);
-  //   callBackFunction(Rooms[roomIndex]);
-  // });
-
-  // //5. When a user requests to leave a room;
-  // socket.on("leaveRoom", (roomIndex) => 
-  // {
-  //   socket.leave(roomIndex);
-  // });
-
-  // // 6. When a user changes the state of the audio playing
-  // socket.on("startStopAudio", (audioDataArr)=> 
-  // {
-  //   // console.log(audioDataArr[0]);
-  //   // console.log(audioDataArr[1]);
-  //   // console.log(audioDataArr[2]);
-  //   // console.log(audioDataArr[3]);
-  //   let thisRoomIndex = parseInt(audioDataArr[3]);
-  //   console.log("audio command room: " + thisRoomIndex);
-  //   Rooms[thisRoomIndex].isTrackPlaying = audioDataArr[0];
-  //   Rooms[thisRoomIndex].trackPosition = audioDataArr[1];
-  //   Rooms[thisRoomIndex].trackTimeStamp = audioDataArr[2];
-  //   console.log("room playing has been changed to:" + Rooms[thisRoomIndex].isTrackPlaying);
-  //   io.emit("newAudioData", [Rooms[thisRoomIndex].isTrackPlaying, Rooms[thisRoomIndex].trackPosition, Rooms[thisRoomIndex].trackTimeStamp, thisRoomIndex]);
-  // });
-
-  // // 6. After user join is accepted, sync all user audio (in room) 
-  // socket.on("updateAllUsers",(audioDataArray) => 
-  // {
-  //   let currRoomIndex = audioDataArray[0];
-  //   if(Rooms[currRoomIndex])
-  //   {
-  //     //let socketID = audioDataArray[1]; 
-  //     Rooms[currRoomIndex].trackPosition = audioDataArray[2];
-  //     Rooms[currRoomIndex].isTrackPlaying = audioDataArray[3];
-  //     Rooms[currRoomIndex].trackTimeStamp = audioDataArray[4];
-  //     io.to(currRoomIndex).emit("newAudioData", Rooms[currRoomIndex]);
-  //   }
-  //   else console.log("SERVER ERROR: " + "updateAlluser received a room that does not exist");
-
-  //   socket.on("disconnect", (socket) => {socket.disconnect(); console.log("socket DISCONNECTED [" + socket.id + "]");});
-  // });
 
 });
 

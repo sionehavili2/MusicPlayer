@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import MusicList from "./MusicList";
 import RoomControl from "./RoomControls";
+import classes from "./AudioRoom.module.css";
 
 const AudioRoom = (props) => 
 {
@@ -9,6 +10,7 @@ const AudioRoom = (props) =>
   const audioRef = useRef(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [roomControls, setRoomControls] = useState(null);
+  const [canUserVote, setCanUserVote] = useState(true);
 
   const handleSkip = () =>  {props.onUpdateAudioData(["skipSong", props.songIndex + 1])}
   const handlePlay = () =>  {if (audioRef.current && audioRef.current.paused) {audioRef.current.play();}};
@@ -29,6 +31,8 @@ const AudioRoom = (props) =>
 
   useEffect(() => 
   {
+      if(props.isVoteAvailable !== canUserVote) {setCanUserVote(props.isVoteAvailable)}
+      // setCanUserVote(props.isVoteAvailable);
       //Host Commands
       if(!props.isHost && props.roomControls.isHostControl) {setButtonDisabled(true);}
       //Set Audio SRC (mp3)
@@ -62,21 +66,26 @@ const AudioRoom = (props) =>
 
    return (
     <div>
-      <h2>Audio Room {props.roomNumber}</h2>
-      <RoomControl {...roomControls} isHost={props.isHost} onUpdateControls={(newControls)=>{props.onUpdateAudioData(["roomControls", audioRef.current.currentTime, newControls])}}/>
-      <audio ref={audioRef} controls>
-        <source type="audio/mpeg" />
-      </audio>
-      <button onClick={handlePlayPauseBtn} disabled={buttonDisabled}>{props.isTrackPlaying ? 'Pause' : 'Play'}</button>
-      <button onClick={handleSkip} disabled={buttonDisabled}>Skip</button>
+      <div className={classes.roomControlContainer}>
+        <h2 className={classes.roomTitle}>Audio Room {props.roomNumber}</h2>
+
+        <RoomControl {...roomControls} host={props.host} isHost={props.isHost} onBeHost={()=>{console.log("audio room has receiveed");  props.onBeHost();}} onUpdateControls={(newControls)=>{props.onUpdateAudioData(["roomControls", audioRef.current.currentTime, newControls])}}/>
+        <audio ref={audioRef}>
+          <source type="audio/mpeg" />
+        </audio>
+        <div className={classes.nowPlayingContainer}>
+          <div><h5>Now Playing : {songList[props.songIndex].slice(0, songList[props.songIndex].lastIndexOf('.mp3'))}</h5></div>
+          <div>
+            <button className={classes.nowPlayingBtn} onClick={handlePlayPauseBtn} disabled={buttonDisabled}>{props.isTrackPlaying ? 'Pause' : 'Play'}</button>
+            <button className={classes.nowPlayingBtn} onClick={handleSkip} disabled={buttonDisabled}>Skip</button>
+          </div>
+          <div><button className={classes.nowPlayingBtn} onClick={()=>{props.onLeaveRoom()}}>Leave Room</button></div>
+        </div>
+      </div>
       <br/>
       <br/>
-      <button onClick={()=>{props.onLeaveRoom()}}>Leave Room</button>
-      <MusicList songList={songList} selectedSongIndex={props.songIndex} hasVoted={props.isVoteAvailable} currentSkipVoteCount={props.skipVoteCount} onVotedToSkip={handleVoteSkip}/>
-      
+      <MusicList songList={songList} selectedSongIndex={props.songIndex} hasVoted={canUserVote} currentSkipVoteCount={props.skipVoteCount} onVotedToSkip={handleVoteSkip}/>
     </div>
   );
 }
 export default AudioRoom;
-
-
