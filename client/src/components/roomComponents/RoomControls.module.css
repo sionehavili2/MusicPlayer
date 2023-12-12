@@ -6,6 +6,7 @@ body {
 }
 
 .mainContainer {
+        margin: 0.75em;
     display: flex;
     justify-content: center;
     text-align: center;
@@ -14,8 +15,7 @@ body {
     padding: 0.5em 0.5em 0.5em 0;
     color: white;
     border-radius: 10px;
-    width: 96%;
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
 }
 
 .mainContainer > div

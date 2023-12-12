@@ -2,12 +2,7 @@
 import React, {useState, useEffect } from 'react';
 import { useSocket } from '../components/SocketProvider.jsx'; 
 import Lobby from "../components/roomComponents/Lobby.jsx";
-import NewsApi from "./NewsApi.jsx";
 import AudioRoom from '../components/roomComponents/AudioRoom.jsx';
-import MusicList from '../components/roomComponents/MusicList.jsx';
-import RoomControl from '../components/roomComponents/RoomControls.jsx';
-import axios from 'axios';
-import MusicPage from './MusicPage.jsx';
 import classes from './Rooms.module.css';
 
 function Rooms()
@@ -38,16 +33,13 @@ function Rooms()
   
   })}},[roomState]);
     //4 If In Room, you can receive host controls
-  useEffect(()=>{if(roomState === 1){onRoomControlData((newControls)=>{console.log("recieved room control..."); if(newControls[0]=== roomNumber){console.log("applying room controls..."); console.log(newControls); setRoomControls(newControls[1])}})}},[roomState]);
+  useEffect(()=>{if(roomState === 1){onRoomControlData((newControls)=>{if(newControls[0]=== roomNumber){setRoomControls(newControls[1])}})}},[roomState]);
   
   const handleUpdateAudio = (audioRoomResponse) => 
   {
     if(audioRoomResponse[0] === "skipVote")
     {
-      console.log("room has received skip vote and will pass to backend");
-      console.log("current has user voted:" + hasUserVoted);
       setHasUserVoted(true);
-      console.log("after has user voted:" + hasUserVoted);
     }
 
     //If you received new room controls
@@ -78,7 +70,7 @@ function Rooms()
           setRoomControls(returnedRoomData[3]); 
           setRoomState(1);
         }) 
-        else sendIt("joinRoom",parseInt(value),(returnedJoinRoomData)=>{console.log("join room..."); setUserID(returnedJoinRoomData[0]);setRoomNumber(returnedJoinRoomData[1]); setAudioRoomData(returnedJoinRoomData[2]);  setRoomControls(returnedJoinRoomData[3]); setRoomState(1);})
+        else sendIt("joinRoom",parseInt(value),(returnedJoinRoomData)=>{ setUserID(returnedJoinRoomData[0]);setRoomNumber(returnedJoinRoomData[1]); setAudioRoomData(returnedJoinRoomData[2]);  setRoomControls(returnedJoinRoomData[3]); setRoomState(1);})
       }      
       return (<div className={classes.roomContainer}>
         <Lobby incomingLobbyData={lobbyData} onSendLobbyData={handleSendLobbyData}/>
@@ -91,7 +83,7 @@ function Rooms()
       const AudioRoomMemo = React.memo(AudioRoom);
       return (<>
         {/* <>{audioRoomData && !audioRoomData.host && <><h3>NO HOST</h3><button onClick={()=>{sendIt("beHost",roomNumber)}}>Be Host</button></>}</> */}
-        <AudioRoomMemo {...audioRoomData} onBeHost={()=>{console.log("room received from audio room " ); sendIt("beHost",roomNumber)}}  isHost={audioRoomData.host === userID}  roomControls={roomControls} roomNumber={roomNumber} isVoteAvailable={hasUserVoted} onUpdateAudioData={handleUpdateAudio} onLeaveRoom={handleLeaveRoom}/>
+        <AudioRoomMemo {...audioRoomData} onBeHost={()=>{ sendIt("beHost",roomNumber)}}  isHost={audioRoomData.host === userID}  roomControls={roomControls} roomNumber={roomNumber} isVoteAvailable={hasUserVoted} onUpdateAudioData={handleUpdateAudio} onLeaveRoom={handleLeaveRoom}/>
       </>);
     }
     //1. If We dont have lobby data display loading

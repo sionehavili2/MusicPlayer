@@ -9,9 +9,9 @@ function HomePage() {
         <NavigationBar />
       <h1>At least 4</h1>
       <Hello />
-      <SocketProvider>
+      {/* <SocketProvider>
         <Rooms />
-      </SocketProvider>
+      </SocketProvider> */}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 .nowPlayingContainer 
 {
-    margin-top: 1em;
+    margin: 0.75em;
     display: flex;
     justify-content: center;
     text-align: center;
@@ -10,9 +10,12 @@
     color: white;
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
-    width: 96%;
     padding: 0.5em 0 0.5em 0;
 }
+
+/* .nowPlayingContainer > * {
+    border: 5px solid blue;
+} */
 
 .nowPlayingContainer > div
 {
@@ -46,7 +49,6 @@
 {
     margin-top: 1em;
     padding-bottom: 1em;
-    width: 90%;
     border-radius: 10px;
     background-color:rgba(33, 33, 33, 0.6);
 }
@@ -65,4 +67,11 @@
     margin-bottom: 0.5em;
 }
 
+.container {
+    margin-top: 1em;
+    width: 95%;
+    background-color:rgba(33, 33, 33, 0.6);
+    border-radius: 10px;
+    padding-bottom: 0.75em;
+}
 

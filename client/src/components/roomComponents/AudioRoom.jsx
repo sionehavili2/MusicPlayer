@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import MusicList from "./MusicList";
 import RoomControl from "./RoomControls";
 import classes from "./AudioRoom.module.css";
+import axios from "axios";
 
 const AudioRoom = (props) => 
 {
@@ -26,6 +27,22 @@ const AudioRoom = (props) =>
     setButtonDisabled(true);
     setTimeout(() => {setButtonDisabled(false)}, 200);  
   };
+
+  const handleLike = async (e) => {
+    console.log("here " + songList[props.songIndex]) 
+    const send = {
+      song: songList[props.songIndex]
+    };
+    await axios
+      .post("http://localhost:4000/likeSong", send)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log("Error, couldn't log in here");
+        console.log(err.message);
+      });
+  }
 
   useEffect(()=>{setRoomControls(props.roomControls)},[props.roomControls]);
 
@@ -65,21 +82,24 @@ const AudioRoom = (props) =>
 
 
    return (
-    <div>
-      <div className={classes.roomControlContainer}>
+    <div >
+      <div className={classes.container}>
         <h2 className={classes.roomTitle}>Audio Room {props.roomNumber}</h2>
-
-        <RoomControl {...roomControls} host={props.host} isHost={props.isHost} onBeHost={()=>{console.log("audio room has receiveed");  props.onBeHost();}} onUpdateControls={(newControls)=>{props.onUpdateAudioData(["roomControls", audioRef.current.currentTime, newControls])}}/>
+        <RoomControl {...roomControls} onBeHost={()=>{props.onBeHost()}} host={props.host} isHost={props.isHost} onUpdateControls={(newControls)=>{props.onUpdateAudioData(["roomControls", audioRef.current.currentTime, newControls])}}/>
         <audio ref={audioRef}>
           <source type="audio/mpeg" />
         </audio>
         <div className={classes.nowPlayingContainer}>
-          <div><h5>Now Playing : {songList[props.songIndex].slice(0, songList[props.songIndex].lastIndexOf('.mp3'))}</h5></div>
+          <div>
+            <h4>Now Playing: {songList[props.songIndex].slice(0, songList[props.songIndex].lastIndexOf('.mp3'))}</h4>
+          </div>
           <div>
             <button className={classes.nowPlayingBtn} onClick={handlePlayPauseBtn} disabled={buttonDisabled}>{props.isTrackPlaying ? 'Pause' : 'Play'}</button>
             <button className={classes.nowPlayingBtn} onClick={handleSkip} disabled={buttonDisabled}>Skip</button>
           </div>
-          <div><button className={classes.nowPlayingBtn} onClick={()=>{props.onLeaveRoom()}}>Leave Room</button></div>
+          <div>
+            <button className={classes.nowPlayingBtn} onClick={()=>{props.onLeaveRoom()}}>Leave</button>
+          </div>
         </div>
       </div>
       <br/>

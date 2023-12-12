@@ -1,15 +1,11 @@
-import React, {useState, useEffect} from 'react';
 import classes from "./MusicList.module.css";
 
 const MusicList = (props) => {
 
-  const [isDisabled, setIsDisabled] = useState(false);
-
   const formatFileName = (fileName) => {
     return fileName.slice(0, fileName.lastIndexOf('.mp3'));
   };
-
-
+  
   return (
     <div className={classes.mainContainer}>{props.songList.map((fileName, index) => 
       (
