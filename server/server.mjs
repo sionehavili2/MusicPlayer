@@ -185,6 +185,22 @@ app.post("/loginWithSalt", async (req, res) => {
   });
 });
 
+app.post("/likeSong", async(req, res) => {
+  const songInfo = {song: req.body.song};
+  console.log(songInfo);
+  let collection = await db.collection("likes")
+
+  const existingLike = await collection.findOne({ songInfo });
+  if (existingLike){
+    console.log("Exists")
+    await collection.updateOne({ songInfo }, { $inc: { likes: 1 } });
+  }
+  else {
+    collection.insertOne({ songInfo, likes: 1 });
+  }
+
+})
+
 app.post("/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -228,7 +244,7 @@ const postTemplate = {
 
 app.post("/newPost", async (req, res) => {
   let tempName  = req.body.message
-  console.log(tempName)
+  //console.log(tempName)
   let collection = db.collection("posts");
   const newPost = { ...postTemplate, "timestamp": new Date(), "body": tempName };
   let result = await collection.insertOne(newPost);
@@ -310,12 +326,12 @@ io.on("connection", (socket) => {
   socket.on("startStopAudio",(recentRoomAudio)=>
   {
     let roomIndex = recentRoomAudio[0];
-    console.log("received room controls.." + recentRoomAudio[1])
-    console.log(recentRoomAudio);
+    //console.log("received room controls.." + recentRoomAudio[1])
+    //console.log(recentRoomAudio);
 
     if(recentRoomAudio[1] === "roomControls")
     {
-      console.log("room controls...");
+      //console.log("room controls...");
       HostControls[roomIndex].isHostControl = recentRoomAudio[4].isHostControl;
       HostControls[roomIndex].audioOutput = recentRoomAudio[4].audioOutput;
       Rooms[roomIndex].trackPosition = recentRoomAudio[2];
@@ -340,9 +356,8 @@ io.on("connection", (socket) => {
       }
       else if(recentRoomAudio[1] === "skipVote")
       {
-        console.log("received skip vote"  
-        );
-        console.log(recentRoomAudio);
+        //console.log("received skip vote");
+       // console.log(recentRoomAudio);
         Rooms[roomIndex].skipVoteCount = Rooms[roomIndex].skipVoteCount + 1;
 
         //If song has been voted to be skipped
@@ -433,9 +448,9 @@ io.on("connection", (socket) => {
   /* 5 -- Server recieves data and sends to all -- */
   socket.on("sendAll", (identifier, data)=>
   {
-    console.log("server received a sendAll...");
-    console.log(identifier);
-    console.log(data);
+    //console.log("server received a sendAll...");
+    //console.log(identifier);
+    //console.log(data);
     io.emit("receiveAll",identifier, data);
   })
   // useEffect(()=>{if(roomState === 1){onAudioRoomData((newAudioData)=> {if(newAudioData[0] === roomNumber){ console.log("appliying audio room data...."); setAudioRoomData(newAudioData[1]); if(newAudioData[2]){setRoomControls(newAudioData[2])} }})}},[roomState]);
@@ -448,8 +463,8 @@ io.on("connection", (socket) => {
     { 
       if(room.host === socket.id)
       {
-        console.log("A Host has disconnected (function is not finished)....");
-        console.log(room);
+        //console.log("A Host has disconnected (function is not finished)....");
+        //console.log(room);
         room.host = null;
         io.emit("audioCommand", [room.roomNumber,Rooms[room.roomNumber]]);
       }
