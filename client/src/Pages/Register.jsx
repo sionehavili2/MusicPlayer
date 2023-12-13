@@ -4,6 +4,7 @@ import axios from "axios";
 import PasswordCheckList from "react-password-checklist";
 import { useNavigate } from "react-router-dom";
 import NavigationBar from "../components/Navigation";
+import classes from "./Register.module.css"
 
 const Register = () => {
   // Variables
@@ -87,7 +88,8 @@ const Register = () => {
   return (
     <div>
       <NavigationBar />
-      <form onSubmit={handleSubmit}>
+      <div className={classes.container}>
+      <form onSubmit={handleSubmit} className={classes.form}>
         <label>Username: </label>
         <input
           type="text"
@@ -130,6 +132,7 @@ const Register = () => {
         <br />
         <button type="Submit">Submit Profile</button>
       </form>
+      </div>
     </div>
   );
 };
