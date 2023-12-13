@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import sha256 from "js-sha256";
 import NavigationBar from "../components/Navigation";
+import classes from "./Login.module.css";
 
 const Login = () => {
   // state
@@ -80,8 +81,9 @@ const Login = () => {
   return (
     <div>
       <NavigationBar />
-      <form onSubmit={handleSubmit}>
-        <label>Username: </label>
+      <div className={classes.container}>
+      <form onSubmit={handleSubmit} className={classes.form}>
+        <label className={classes.label}>Username: </label>
         <input
           type="text"
           name="username"
@@ -89,7 +91,7 @@ const Login = () => {
           onChange={handleUsernameChange}
         />
         <br />
-        <label>Password:</label>
+        <label className={classes.label}>Password:</label>
         <input
           type="password"
           name="password"
@@ -99,6 +101,7 @@ const Login = () => {
         <br />
         <button type="Submit">Submit username</button>
       </form>
+      </div>
     </div>
   );
 };

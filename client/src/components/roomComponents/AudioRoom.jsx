@@ -163,6 +163,15 @@ const AudioRoom = (props) => {
           <div>
             <button
               className={classes.nowPlayingBtn}
+              onClick={handleLike}
+              disabled={buttonDisabled}
+            >
+              Like
+            </button>
+          </div>
+          <div>
+            <button
+              className={classes.nowPlayingBtn}
               onClick={() => {
                 props.onLeaveRoom();
               }}
