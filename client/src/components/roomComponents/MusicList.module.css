@@ -1,0 +1,48 @@
+.mainContainer {
+    padding: 1em;
+    border-radius: 10px;
+    text-align: center;
+    width: 95%;
+    background-color:rgba(33, 33, 33, 0.6);
+    
+}
+
+.mainContainer > * {
+    margin: 1em;
+    background-color: rgba(35, 33, 33, 0.5);
+    color: white;
+    border-radius: 12px;
+}
+
+.mainContainerTiles 
+{
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25em 0.5em 0.25em 0.5em;
+    border-radius: 12px;
+}
+
+.selectedMainContainerTiles 
+{
+    background-color: rgba(0,0,0, 0.3);
+}
+
+.mainContainerTiles > *
+{
+    width: 75%;
+    border-radius: 12px;
+    height: 100%;
+}
+
+.voteBtn
+{
+    background-color: rgba(0, 0, 0, 0.2);
+    color:white;
+    border-radius: 7.5px;
+    padding: 0.1em 0.75em 0.1em 0.75em;
+}
+
+.selectedSongText 
+{
+    font-weight: bold;
+}

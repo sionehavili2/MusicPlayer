@@ -1,47 +1,28 @@
-import React, { useState } from 'react';
+import classes from "./MusicList.module.css";
 
-const MusicList = ({ audioQueue, onAddToQueue, removeFromQueue }) => {
-  
-  const [songList] = useState([
-    "Aint Too Proud To Beg.mp3",
-    "Cupid.mp3",
-    "Mr Telephone Man.mp3",
-    "Never Too Much.mp3",
-    "Passionfruit.mp3",
-    "What You Wont Do for Love.mp3",
-    "Whats Going On.mp3"
-  ]);
+const MusicList = (props) => {
 
   const formatFileName = (fileName) => {
     return fileName.slice(0, fileName.lastIndexOf('.mp3'));
   };
-
-  const addToQueue = (fileName) => {
-    onAddToQueue(fileName);
-  };
-
-  // return (
-  //   <div>
-  //     <h2>Music List</h2>
-  //     {songList.map((fileName, index) => (
-  //       <div key={index}>
-  //         <p>{formatFileName(fileName)}</p>
-  //         <button onClick={() => addToQueue(fileName)}>Add to Queue</button>
-  //       </div>
-  //     ))}
-  //     <h2>Audio Queue</h2>
-  //     <ul>
-  //       {audioQueue.map((queuedFile, index) => (
-  //         <li key={index}>
-  //           {formatFileName(queuedFile)}
-  //           <button onClick={() => removeFromQueue(index)}>Remove</button>
-  //         </li>
-  //       ))}
-  //     </ul>
-  //   </div>
-  // );
-
-  return <div>Music list...</div>
+  
+  return (
+    <div className={classes.mainContainer}>{props.songList.map((fileName, index) => 
+      (
+        <div key={index}>{props.selectedSongIndex === index 
+          ?
+            <div className={classes.selectedMainContainerTiles + " " + classes.mainContainerTiles}>
+              <div className={classes.selectedSongText}>{index + 1}. {formatFileName(fileName)}</div>
+              {!props.hasVoted && <button onClick={()=>{props.onVotedToSkip();}} className={classes.voteBtn} disabled={props.hasVoted}>Vote to Skip</button>}
+              {props.currentSkipVoteCount > 0 && <div> Skip Votes : {props.currentSkipVoteCount}</div>}
+            </div>
+          : 
+            <div className={classes.mainContainerTiles}>{index + 1}. {formatFileName(fileName)}</div> 
+          }
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export default MusicList;

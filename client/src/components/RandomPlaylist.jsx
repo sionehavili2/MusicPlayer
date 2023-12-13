@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function RandomPlaylist( {accessToken}){
+function RandomPlaylist( {accessToken})
+{
     const [category, setCategory] = useState("");
     const [data, setData] = useState(null)
     const [playlistId3, setplaylistId3] = useState("")
