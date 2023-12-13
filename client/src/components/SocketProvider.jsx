@@ -33,7 +33,7 @@ const SocketProvider = ({children}) =>
 
   useEffect(() => 
   {
-    const socketInstance = io("http://localhost:5000");
+    const socketInstance = io("http://10.0.0.125:5000");
     socketInstance.on("connect", () => { console.log("socket is connected to server");});
     setSocket(socketInstance);
     return () => {socketInstance.disconnect()};
